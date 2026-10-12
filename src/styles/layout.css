@@ -1,0 +1,452 @@
+/* ==========================================================================
+   Application shell - sidebar, header, content area, mobile bar
+
+   A navy sidebar (the sky) beside white panels on sand. The sand itself is
+   painted once, behind everything, in base.css.
+   ========================================================================== */
+
+.app-shell {
+  @apply flex min-h-dvh;
+}
+
+/* -------------------------------------------------------------- sidebar -- */
+
+.sidebar {
+  @apply fixed inset-y-0 left-0 z-[60] flex flex-col overflow-hidden text-white;
+  width: var(--sidebar-width);
+  background: linear-gradient(180deg, var(--color-navy-900) 0%, var(--color-navy-800) 52%, var(--color-navy-700) 100%);
+  box-shadow: 8px 0 32px -18px rgb(10 26 68 / 0.6);
+  transition: transform 0.28s var(--ease-spring);
+}
+
+/* Dunes along the foot of the sidebar. */
+.sidebar::after {
+  content: '';
+  @apply pointer-events-none absolute inset-x-0 bottom-0 h-44;
+  background: url('/sand-dunes.svg') center bottom / cover no-repeat;
+  opacity: 0.3;
+  -webkit-mask-image: linear-gradient(to top, #000 30%, transparent);
+  mask-image: linear-gradient(to top, #000 30%, transparent);
+}
+
+.sidebar > * {
+  @apply relative z-[1];
+}
+
+.sidebar__brand {
+  @apply flex shrink-0 items-center gap-3 px-5;
+  height: var(--header-height);
+  border-bottom: 1px solid rgb(255 255 255 / 0.1);
+}
+
+/* The emblem's dark green ring disappears on navy, so it sits on a white disc. */
+.sidebar__brand .app-emblem {
+  @apply rounded-full bg-white;
+  box-sizing: content-box;
+  padding: 3px;
+}
+
+.sidebar__brand-text {
+  @apply min-w-0;
+}
+
+.sidebar__brand-title {
+  @apply truncate text-[15px] leading-tight font-bold tracking-[0.08em] text-white;
+}
+
+.sidebar__brand-sub {
+  @apply mt-0.5 text-[8.5px] font-semibold tracking-[0.14em] text-sand-300 uppercase;
+}
+
+.sidebar__nav {
+  @apply flex-1 overflow-y-auto px-3 pb-5;
+  scrollbar-color: rgb(255 255 255 / 0.25) transparent;
+}
+
+.sidebar__group-label {
+  @apply px-3 pt-5 pb-2 text-[10px] font-semibold tracking-[0.14em] uppercase;
+  color: rgb(255 255 255 / 0.42);
+}
+
+.sidebar__link {
+  @apply relative mb-1 flex items-center gap-3 rounded-full py-1.5 pr-4 pl-1.5 text-[13px] font-medium no-underline;
+  color: rgb(255 255 255 / 0.78);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sidebar__link:hover {
+  @apply text-white no-underline;
+  background: rgb(255 255 255 / 0.09);
+}
+
+.sidebar__link-icon {
+  @apply grid size-8 shrink-0 place-items-center rounded-full;
+  background: rgb(255 255 255 / 0.08);
+  color: rgb(255 255 255 / 0.82);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sidebar__link-label {
+  @apply min-w-0 truncate;
+}
+
+/* Current page: a white pill with a gold icon disc. */
+.sidebar__link.is-active {
+  @apply bg-white font-semibold text-navy-900;
+  box-shadow: 0 8px 20px -10px rgb(0 0 0 / 0.55);
+}
+
+.sidebar__link.is-active .sidebar__link-icon {
+  @apply bg-sand-300 text-navy-900;
+}
+
+.sidebar__footer {
+  @apply m-3 shrink-0;
+}
+
+/* The signed-in user; opens My Profile. */
+.sidebar__user {
+  @apply flex items-center gap-3 rounded-2xl p-2.5 no-underline;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: rgb(10 26 68 / 0.55);
+  backdrop-filter: blur(6px);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+.sidebar__user:hover {
+  @apply no-underline;
+  border-color: rgb(255 255 255 / 0.32);
+  background: rgb(10 26 68 / 0.72);
+}
+.sidebar__user.active {
+  border-color: var(--color-sand-300);
+}
+
+.sidebar__user-name {
+  @apply block truncate text-[13px] font-semibold text-white;
+}
+.sidebar__user-role {
+  @apply block text-[11px];
+  color: rgb(255 255 255 / 0.62);
+}
+
+.sidebar__version {
+  @apply mt-2 text-center text-[10.5px];
+  color: rgb(255 255 255 / 0.5);
+}
+.sidebar__version strong {
+  @apply font-semibold;
+  color: rgb(255 255 255 / 0.72);
+}
+
+.sidebar__scrim {
+  @apply fixed inset-0 z-[55] animate-fade-in cursor-default;
+  background: rgb(10 26 68 / 0.55);
+  backdrop-filter: blur(2px);
+}
+
+/* --------------------------------------------------------------- header -- */
+
+.app-main {
+  @apply flex min-w-0 flex-1 flex-col;
+  margin-left: var(--sidebar-width);
+}
+
+.app-header {
+  @apply sticky top-0 z-40 flex items-center gap-3.5 px-7;
+  height: var(--header-height);
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: saturate(160%) blur(14px);
+  border-bottom: 1px solid rgb(255 255 255 / 0.7);
+  box-shadow: 0 6px 24px -18px rgb(10 26 68 / 0.5);
+}
+
+.app-header__menu {
+  @apply hidden size-10 shrink-0 cursor-pointer place-items-center rounded-full bg-navy-900 text-white;
+  transition: background-color 0.15s ease;
+}
+.app-header__menu:hover {
+  @apply bg-navy-700;
+}
+
+/* The sidebar already carries the brand on wide screens; the header only
+   shows it once the sidebar has collapsed into a drawer. */
+.app-header__identity {
+  @apply hidden min-w-0 items-center gap-3;
+}
+
+.app-header__title {
+  @apply min-w-0 leading-tight;
+}
+.app-header__title strong {
+  @apply block truncate text-[15px] font-bold tracking-[0.08em] text-navy-900;
+}
+.app-header__title span {
+  @apply mt-0.5 block text-[9px] font-semibold tracking-[0.12em] text-sand-600 uppercase;
+}
+
+/* Today's date sits where the brand would otherwise repeat on wide screens. */
+.app-header__date {
+  @apply flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-[12.5px] font-medium text-navy-900 shadow-xs;
+}
+.app-header__date > svg {
+  @apply text-brand-600;
+}
+
+.app-header__spacer {
+  @apply flex-1;
+}
+
+.app-header__live {
+  @apply inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1.5 text-[11.5px] font-semibold text-green-800;
+  box-shadow: inset 0 0 0 1px rgb(22 163 74 / 0.22);
+}
+
+.app-header__live-dot {
+  @apply size-[7px] animate-live rounded-full bg-green-500;
+}
+
+.app-header__live--offline {
+  @apply bg-amber-50 text-amber-800;
+  box-shadow: inset 0 0 0 1px rgb(217 119 6 / 0.28);
+}
+.app-header__live--offline .app-header__live-dot {
+  @apply animate-none bg-amber-500;
+}
+
+/* ------------------------------------------------------------ user menu -- */
+
+.user-menu {
+  @apply relative;
+}
+
+.user-menu__trigger {
+  @apply flex cursor-pointer items-center gap-2.5 rounded-full bg-white py-1 pr-3 pl-1 shadow-xs;
+  border: 1px solid rgb(15 37 87 / 0.1);
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+.user-menu__trigger:hover {
+  @apply border-brand-500;
+}
+
+.avatar {
+  @apply grid size-8 shrink-0 place-items-center rounded-full text-xs font-semibold text-white;
+  background-image: linear-gradient(135deg, var(--color-brand-500), var(--color-navy-800));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25);
+}
+
+.avatar--lg {
+  @apply size-12 text-base;
+}
+
+/* An approved e-mail whose Google account has not signed in yet. */
+.avatar--muted {
+  @apply bg-slate-200 text-slate-600;
+  background-image: none;
+  box-shadow: none;
+}
+
+/* The Google account's own picture, where the profile has one. */
+img.avatar {
+  @apply object-cover;
+  background-image: none;
+}
+
+.user-menu__meta {
+  @apply max-w-[190px] text-left leading-tight;
+}
+.user-menu__email {
+  @apply block truncate text-[12.5px] font-semibold text-navy-900;
+}
+.user-menu__role {
+  @apply block text-[10.5px] text-slate-500;
+}
+
+.user-menu__panel {
+  @apply absolute top-[calc(100%+10px)] right-0 z-50 w-[280px] origin-top-right animate-pop-in rounded-[20px] bg-white p-2 shadow-float;
+  border: 1px solid rgb(15 37 87 / 0.08);
+}
+
+.user-menu__panel-head {
+  @apply mb-2 flex items-center gap-3 rounded-2xl bg-sand-50 p-3;
+}
+
+.user-menu__panel-name {
+  @apply text-[13.5px] font-semibold text-navy-900;
+  overflow-wrap: anywhere;
+}
+.user-menu__panel-email {
+  @apply text-[11.5px] text-slate-500;
+  overflow-wrap: anywhere;
+}
+
+.user-menu__item {
+  @apply flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[13px] font-medium text-slate-700 no-underline;
+  transition: background-color 0.15s ease;
+}
+.user-menu__item:hover {
+  @apply bg-slate-100 no-underline;
+}
+.user-menu__item--danger {
+  @apply text-red-600;
+}
+.user-menu__item--danger:hover {
+  @apply bg-red-50;
+}
+
+/* ------------------------------------------------------------- content -- */
+
+.app-content {
+  @apply mx-auto w-full max-w-[1560px] min-w-0 flex-1 p-7;
+}
+
+/* Each routed page settles in rather than snapping. The animation leaves no
+   transform behind, so it can never become the containing block of the
+   receipt's print area. */
+.app-main > .app-content > *:not(.dialog-backdrop) {
+  animation: var(--animate-rise-in);
+}
+
+/* The page heading is a banner: white on the left, dunes fading in on the right. */
+.page-head {
+  @apply mb-6 flex flex-wrap items-center justify-between gap-4 overflow-hidden rounded-[20px] px-6 py-5 shadow-card;
+  border: 1px solid rgb(255 255 255 / 0.9);
+  background:
+    linear-gradient(90deg, #ffffff 0%, #ffffff 44%, rgb(255 255 255 / 0.78) 66%, rgb(255 255 255 / 0.2) 100%),
+    url('/sand-dunes.svg') right bottom / 620px auto no-repeat,
+    #ffffff;
+}
+
+.page-head__actions {
+  @apply flex flex-wrap gap-2.5;
+}
+
+.breadcrumb {
+  @apply mb-1.5 flex items-center gap-1.5 text-[10.5px] font-semibold tracking-[0.12em] text-sand-600 uppercase;
+}
+.breadcrumb a {
+  @apply text-sand-600;
+}
+
+/* ----------------------------------------------------------- mobile bar -- */
+/* Thumb-reach navigation; only shown on phones. */
+
+.bottom-nav {
+  @apply hidden;
+}
+
+.bottom-nav__item {
+  @apply flex flex-col items-center gap-1 rounded-2xl py-1.5 text-[10px] font-medium no-underline;
+  color: rgb(255 255 255 / 0.7);
+}
+.bottom-nav__item:hover {
+  @apply text-white no-underline;
+}
+.bottom-nav__item.active {
+  @apply text-white;
+  background: rgb(255 255 255 / 0.14);
+}
+
+/* The one action an operator opens the app for. */
+.bottom-nav__item--primary {
+  @apply -mt-7 text-white;
+  background: none;
+}
+.bottom-nav__item--primary.active {
+  background: none;
+}
+.bottom-nav__fab {
+  @apply grid size-[54px] place-items-center rounded-full text-navy-900;
+  background-image: linear-gradient(135deg, var(--color-sand-200), var(--color-sand-400));
+  box-shadow:
+    0 0 0 5px var(--color-navy-900),
+    0 10px 22px -8px rgb(0 0 0 / 0.6);
+}
+
+/* --------------------------------------------------------- responsive --- */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.is-open {
+    transform: translateX(0);
+  }
+  .app-main {
+    margin-left: 0;
+  }
+  .app-header__menu {
+    @apply grid;
+  }
+  .app-header__identity {
+    @apply flex;
+  }
+  .app-header__date {
+    @apply hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-content {
+    /* Room for the floating bar below the last card. */
+    @apply px-4 pt-4 pb-28;
+  }
+  .app-header {
+    @apply gap-2.5 px-4;
+  }
+  .user-menu__meta {
+    @apply hidden;
+  }
+  .user-menu__trigger {
+    @apply border-transparent p-1 shadow-none;
+    background: none;
+  }
+  .app-header__live span:last-child {
+    @apply hidden;
+  }
+  .app-header__live {
+    @apply p-2;
+  }
+  .page-head {
+    @apply mb-4 px-4 py-4;
+    background:
+      linear-gradient(180deg, #ffffff 0%, rgb(255 255 255 / 0.92) 55%, rgb(255 255 255 / 0.55) 100%),
+      url('/sand-dunes.svg') center bottom / cover no-repeat,
+      #ffffff;
+  }
+  .page-title {
+    @apply text-[21px];
+  }
+
+  .bottom-nav {
+    @apply fixed inset-x-3 bottom-3 z-[45] grid grid-cols-5 items-end gap-1 rounded-[24px] px-2 py-2;
+    background: linear-gradient(135deg, var(--color-navy-900), var(--color-navy-700));
+    box-shadow: 0 18px 40px -14px rgb(10 26 68 / 0.75);
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header__title strong {
+    @apply text-[13.5px] tracking-[0.06em];
+  }
+  .app-header__title span {
+    @apply text-[8px];
+  }
+  .app-content {
+    @apply px-3 pt-3;
+  }
+  .page-head__actions {
+    @apply w-full;
+  }
+  .page-head__actions .btn {
+    @apply flex-1;
+  }
+}

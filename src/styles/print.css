@@ -1,0 +1,221 @@
+/* ==========================================================================
+   Print pipeline
+
+   The receipt is a plain slip (see receipt.css): emblem beside the title,
+   the copy name underlined, label / value lines, no boxes or rules.
+
+   `printReceipt()` and `renderThermalCanvas()` (utils/pdf.js) clone the
+   receipt sheet into a `.receipt-print-root` holder (a direct child of
+   <body>) that gives it the paper layout. For the print dialog the holder is
+   also `#receipt-print-root`, and every other child of <body> is
+   `display: none`, so the app shell can never push blank pages onto a
+   thermal roll (spec section 16).
+   ========================================================================== */
+
+/* Off-screen while it exists: it is only there to be printed or captured. */
+.receipt-print-root {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: var(--print-width, 72mm);
+  background: #ffffff;
+}
+
+/* ------------------------------------------------------- compact layout -- */
+/* Smaller type and tighter spacing than the on-screen preview (A4 base). */
+
+.receipt-print-root .receipt-sheet {
+  width: var(--print-width, 72mm);
+  max-width: none;
+  margin: 0;
+  padding: 1mm var(--print-gutter, 1mm) 3mm;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.receipt-print-root .receipt-head { gap: 7px; padding-bottom: 5px; }
+/* Emblem beside the title. */
+.receipt-print-root .receipt-head .app-emblem {
+  display: block;
+  width: auto;
+  height: 40px;
+  margin: 0;
+}
+.receipt-print-root .receipt-head__title { font-size: 13px; }
+.receipt-print-root .receipt-head__subtitle { font-size: 7px; margin-top: 1px; }
+
+.receipt-print-root .receipt-copy-title { margin: 3px 0 5px; font-size: 9.5px; }
+.receipt-print-root .receipt-group + .receipt-group { margin-top: 5px; }
+.receipt-print-root .receipt-row { padding: 1px 0; }
+.receipt-print-root .receipt-row--block { padding: 1.5px 0; }
+.receipt-print-root .receipt-divider { margin: 5px 0; }
+.receipt-print-root .receipt-divider--strong { margin: 0; height: 14px; }
+
+.receipt-print-root .receipt-qr { gap: 3px; padding: 6px 0 2px; }
+/* The QR <img> carries an inline size, hence !important. */
+.receipt-print-root .receipt-qr__frame img,
+.receipt-print-root .receipt-qr__frame canvas { width: 88px !important; height: 88px !important; }
+.receipt-print-root .receipt-qr__caption { font-size: 6.5px; }
+.receipt-print-root .receipt-thanks { margin-top: 2px; font-size: 8px; }
+.receipt-print-root .receipt-foot { margin-top: 4px; font-size: 6.5px; line-height: 1.35; }
+.receipt-print-root .receipt-status-stamp { margin-top: 5px; font-size: 9px; }
+
+/* ---------------------------------------------------- thermal printers -- */
+/* Tuned for a 203 dpi head (TVS MLP 3120: 576 dots across 72 mm, so one CSS
+   pixel is about two dots). A thermal head prints black dots only: tints and
+   grey text come out as faint speckle, so everything is pure black on white.
+
+   The slip keeps its typewriter face on the roll. That face is Courier Prime,
+   loaded as a web font, so a phone prints the same letters as a desktop -
+   the system 'Courier New' is NOT safe here: Android resolves it to Cutive
+   Mono, a hairline face with no bold, which once made the labels vanish on
+   paper. At these sizes its regular stems come out about two dots wide and
+   its bold ones about four - the same as a thermal printer's own fonts - so
+   labels (regular) and values (bold) stay clearly different on the roll.
+
+   Weights stop at 700: heavier ones have taller metrics that html2canvas
+   does not account for, and the text lands a few dots out of line. */
+
+.receipt-print-root.is-thermal .receipt-sheet,
+.receipt-print-root.is-thermal .receipt-sheet * {
+  color: #000000 !important;
+  background: transparent !important;
+  border-color: #000000 !important;
+  box-shadow: none !important;
+}
+
+.receipt-print-root.is-thermal .receipt-sheet {
+  padding: 1mm var(--print-gutter, 6mm) 5mm;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.receipt-print-root.is-thermal .receipt-head { gap: 8px; padding-bottom: 6px; }
+/* The colour emblem's yellow rays and gradients print as speckle; the
+   black-and-white copy is cut for the head (about 18 mm tall on paper). */
+.receipt-print-root.is-thermal .receipt-head .app-emblem { display: none; }
+.receipt-print-root.is-thermal .receipt-head .app-emblem--print { display: block; height: 56px; }
+.receipt-print-root.is-thermal .receipt-head__title { font-size: 19px; font-weight: 700; }
+.receipt-print-root.is-thermal .receipt-head__subtitle { font-size: 8.5px; font-weight: 700; letter-spacing: 0; }
+
+.receipt-print-root.is-thermal .receipt-copy-title { margin: 4px 0 6px; font-size: 13px; font-weight: 700; }
+.receipt-print-root.is-thermal .receipt-group + .receipt-group { margin-top: 6px; }
+
+/* Label and value share one font size per row: mixed sizes on a baseline
+   row come out a few dots out of line in the image capture. At 11px the
+   roll holds 34 characters, enough for "Dispatch Date" and a full date and
+   time on one line. */
+.receipt-print-root.is-thermal .receipt-row { gap: 6px; padding: 1px 0; font-size: 11px; }
+.receipt-print-root.is-thermal .receipt-row__label { max-width: 56%; font-weight: 400; }
+.receipt-print-root.is-thermal .receipt-row__value { max-width: 64%; font-size: inherit; font-weight: 700; }
+.receipt-print-root.is-thermal .receipt-row--block { padding: 1.5px 0; }
+.receipt-print-root.is-thermal .receipt-row--block .receipt-row__label,
+.receipt-print-root.is-thermal .receipt-row--block .receipt-row__value { max-width: none; }
+
+.receipt-print-root.is-thermal .receipt-divider { margin: 6px 0; }
+/* About 6 mm of blank roll between the two copies - no line is printed. */
+.receipt-print-root.is-thermal .receipt-divider--strong { margin: 0; height: 22px; }
+
+.receipt-print-root.is-thermal .receipt-qr { gap: 4px; padding: 8px 0 2px; }
+.receipt-print-root.is-thermal .receipt-qr__frame img,
+.receipt-print-root.is-thermal .receipt-qr__frame canvas {
+  width: 112px !important;
+  height: 112px !important;
+  image-rendering: pixelated;
+}
+.receipt-print-root.is-thermal .receipt-qr__caption { font-size: 9px; font-weight: 700; }
+.receipt-print-root.is-thermal .receipt-thanks { margin-top: 3px; font-size: 11px; font-weight: 700; }
+.receipt-print-root.is-thermal .receipt-foot { margin-top: 5px; font-size: 8.5px; font-weight: 700; line-height: 1.35; }
+.receipt-print-root.is-thermal .receipt-status-stamp { margin-top: 6px; font-size: 13px; font-weight: 700; }
+
+/* ------------------------------------------------------------------ A4 -- */
+/* A framed sheet so it reads as a document rather than a stretched roll. */
+
+.receipt-print-root.is-a4 { width: 110mm; }
+.receipt-print-root.is-a4 .receipt-sheet {
+  width: 110mm;
+  font-size: 9pt;
+  padding: 5mm 7mm;
+  border: 1px solid #cbd5e1;
+}
+.receipt-print-root.is-a4 .receipt-head__title { font-size: 15pt; }
+.receipt-print-root.is-a4 .receipt-qr__frame img,
+.receipt-print-root.is-a4 .receipt-qr__frame canvas { width: 26mm !important; height: 26mm !important; }
+
+/* =============================================================== paper == */
+
+@media print {
+  html.is-printing,
+  html.is-printing body {
+    width: auto;
+    height: auto;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+  }
+
+  html.is-printing body > *:not(#receipt-print-root) { display: none !important; }
+
+  #receipt-print-root {
+    position: static;
+    left: auto;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  /* A roll narrower than the profile (e.g. 58 mm) still gets the whole receipt. */
+  #receipt-print-root .receipt-sheet { max-width: 100%; }
+
+  #receipt-print-root .receipt-divider,
+  #receipt-print-root .receipt-copy-title,
+  #receipt-print-root .receipt-qr,
+  #receipt-print-root .receipt-row {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #receipt-print-root,
+  #receipt-print-root * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     Fallback for Ctrl+P / the browser menu (no clone): still send only the
+     receipt to paper, never the shell around it.
+     ------------------------------------------------------------------------ */
+
+  html:not(.is-printing) body * { visibility: hidden !important; }
+
+  html:not(.is-printing) #receipt-print-area,
+  html:not(.is-printing) #receipt-print-area * { visibility: visible !important; }
+
+  html:not(.is-printing) #receipt-print-area {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  html:not(.is-printing) .receipt-sheet {
+    width: 100% !important;
+    max-width: 72mm !important;
+    margin: 0 auto !important;
+    padding: 1mm !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  html:not(.is-printing) .sidebar,
+  html:not(.is-printing) .app-header,
+  html:not(.is-printing) .toast-stack,
+  html:not(.is-printing) .no-print { display: none !important; }
+
+  a[href]::after { content: '' !important; }
+}

@@ -1,0 +1,182 @@
+/* ==========================================================================
+   Design tokens (Tailwind v4 theme)
+
+   Every colour is declared in hex on purpose. Tailwind's stock palette is
+   written in oklch(), which html2canvas cannot parse - and html2canvas is
+   what renders the receipt for "Printer Image" and "Download PDF". Keeping
+   the palette in hex means no utility can ever hand it an oklch() value.
+   ========================================================================== */
+
+@theme static {
+  /* --------------------------------------------------------------- type -- */
+  --font-sans: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-mono: Consolas, 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace;
+
+  /* ------------------------------------------------------------- colour -- */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Brand: royal blue. Primary actions, selection, the current page. */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+  --color-brand-950: #172554;
+
+  /* Neutrals: cool slate, so surfaces sit comfortably next to the brand. */
+  --color-canvas: #f6e8cf;
+
+  /* Sand: the page itself, picked up from public/sand-bg.svg. */
+  --color-sand-50: #fbf4e6;
+  --color-sand-100: #f6e8cf;
+  --color-sand-200: #efd9b3;
+  --color-sand-300: #e2be83;
+  --color-sand-400: #cfa463;
+  --color-sand-500: #b98848;
+  --color-sand-600: #9b6c34;
+
+  /* Navy: the sidebar, table headers and headings - the "sky" over the sand. */
+  --color-navy-700: #16306e;
+  --color-navy-800: #0f2557;
+  --color-navy-900: #0a1a44;
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  /* Status */
+  --color-green-50: #f0fdf4;
+  --color-green-100: #dcfce7;
+  --color-green-200: #bbf7d0;
+  --color-green-300: #86efac;
+  --color-green-400: #4ade80;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+  --color-green-700: #15803d;
+  --color-green-800: #166534;
+  --color-green-900: #14532d;
+
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+
+  --color-amber-50: #fffbeb;
+  --color-amber-100: #fef3c7;
+  --color-amber-200: #fde68a;
+  --color-amber-300: #fcd34d;
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+  --color-amber-700: #b45309;
+  --color-amber-800: #92400e;
+  --color-amber-900: #78350f;
+
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-blue-800: #1e40af;
+
+  /* -------------------------------------------------------------- depth -- */
+  --shadow-xs: 0 1px 2px rgb(15 23 42 / 0.05);
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 12px 28px -16px rgb(15 23 42 / 0.16);
+  --shadow-raised: 0 2px 4px rgb(15 23 42 / 0.04), 0 20px 40px -18px rgb(15 23 42 / 0.24);
+  --shadow-float: 0 8px 16px -6px rgb(15 23 42 / 0.1), 0 28px 64px -20px rgb(15 23 42 / 0.34);
+  --shadow-brand: inset 0 1px 0 rgb(255 255 255 / 0.22), 0 1px 2px rgb(30 64 175 / 0.3),
+    0 10px 20px -10px rgb(37 99 235 / 0.6);
+
+  /* ------------------------------------------------------------- motion -- */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-spin: spin 0.7s linear infinite;
+  --animate-fade-in: fade-in 0.18s ease-out backwards;
+  --animate-pop-in: pop-in 0.22s var(--ease-spring) backwards;
+  --animate-slide-in: slide-in 0.28s var(--ease-spring) backwards;
+  --animate-rise-in: rise-in 0.32s var(--ease-spring) backwards;
+  --animate-shimmer: shimmer 1.4s ease-in-out infinite;
+  --animate-live: live 2s ease-in-out infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes shimmer {
+    0% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0 50%;
+    }
+  }
+  @keyframes live {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(34 197 94 / 0.45);
+    }
+    60% {
+      box-shadow: 0 0 0 5px rgb(34 197 94 / 0);
+    }
+  }
+}

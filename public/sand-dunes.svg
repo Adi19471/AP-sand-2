@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1a44"/>
+      <stop offset="0.42" stop-color="#1e4fc9"/>
+      <stop offset="0.74" stop-color="#86b6ee"/>
+      <stop offset="1" stop-color="#f8dcae"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.74" cy="0.6" r="0.38">
+      <stop offset="0" stop-color="#fff6dc" stop-opacity="0.95"/>
+      <stop offset="0.22" stop-color="#ffdf9a" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffdf9a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="d1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0d3a0"/>
+      <stop offset="1" stop-color="#dcb77e"/>
+    </linearGradient>
+    <linearGradient id="d2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8c388"/>
+      <stop offset="1" stop-color="#cc9f60"/>
+    </linearGradient>
+    <linearGradient id="d3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dcae6b"/>
+      <stop offset="1" stop-color="#b98848"/>
+    </linearGradient>
+    <linearGradient id="d4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c89653"/>
+      <stop offset="1" stop-color="#9b6c34"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect width="1600" height="900" fill="url(#sun)"/>
+
+  <!-- far ridge -->
+  <path d="M0 560 C 190 500 380 524 560 562 S 900 642 1100 560 S 1420 482 1600 540 V900 H0 Z" fill="url(#d1)"/>
+  <path d="M0 560 C 190 500 380 524 560 562 S 900 642 1100 560 S 1420 482 1600 540" fill="none" stroke="#fff3d6" stroke-opacity="0.55" stroke-width="3"/>
+
+  <!-- middle dunes -->
+  <path d="M0 640 C 220 588 420 662 640 640 S 980 560 1200 630 S 1480 702 1600 650 V900 H0 Z" fill="url(#d2)"/>
+  <path d="M0 640 C 220 588 420 662 640 640 S 980 560 1200 630 S 1480 702 1600 650" fill="none" stroke="#fbe6bd" stroke-opacity="0.5" stroke-width="3"/>
+
+  <path d="M0 730 C 260 660 520 762 800 720 S 1240 650 1600 740 V900 H0 Z" fill="url(#d3)"/>
+  <path d="M0 730 C 260 660 520 762 800 720 S 1240 650 1600 740" fill="none" stroke="#f3d39c" stroke-opacity="0.45" stroke-width="3"/>
+
+  <!-- wind ripples on the middle dunes -->
+  <g fill="none" stroke="#fff0cf" stroke-opacity="0.22" stroke-width="2">
+    <path d="M60 690 C 240 650 420 706 620 690"/>
+    <path d="M100 708 C 270 672 430 722 610 708"/>
+    <path d="M880 664 C 1020 624 1160 652 1300 676"/>
+    <path d="M920 684 C 1050 648 1180 672 1320 696"/>
+    <path d="M300 792 C 480 752 640 808 820 780"/>
+    <path d="M1040 770 C 1200 736 1360 760 1520 790"/>
+  </g>
+
+  <!-- foreground -->
+  <path d="M0 820 C 300 760 620 862 940 810 S 1380 772 1600 830 V900 H0 Z" fill="url(#d4)"/>
+  <path d="M0 820 C 300 760 620 862 940 810 S 1380 772 1600 830" fill="none" stroke="#e6bd7d" stroke-opacity="0.45" stroke-width="3"/>
+</svg>

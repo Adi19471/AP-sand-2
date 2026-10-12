@@ -1,0 +1,369 @@
+rules_version = '2';
+
+// ===========================================================================
+// AP SAND MANAGEMENT SYSTEM - Cloud Firestore security rules
+//
+// Sign-in is with a Google account. Signing in proves who someone is; it
+// does not let them in. Access is the profile's `status`:
+//   ACTIVE    approved - by an administrator, or a permanent admin e-mail
+//   PENDING   signed in, still waiting for an administrator
+//   DISABLED  access revoked
+// Every rule below that touches data requires ACTIVE.
+//
+// Collections
+//   users/{uid}                profile + role + status, created on the first
+//                              Google sign-in. Role and ACTIVE status are
+//                              NEVER client-assignable: they come from an
+//                              administrator's approval or the permanent
+//                              admin list below.
+//   accessList/{email}         a Google account an administrator approved
+//                              before it had ever signed in. Consumed (turned
+//                              into users/{uid}) by that account's first
+//                              sign-in.
+//   loginSessions/{sessionId}  append-only login audit trail.
+//   receipts/{receiptId}       dispatch receipts.
+//   counters/{counterId}       aggregate counters used by the live dashboard.
+//   settings/{settingId}       app configuration.
+//   auditLogs/{logId}          append-only action log.
+//   verifications/{token}      public, non-personal copy of a receipt that the
+//                              receipt QR code opens. Readable by anyone who
+//                              holds the (unguessable) token; never listable.
+// ===========================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------- utils
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function uid() {
+      return request.auth.uid;
+    }
+
+    function authEmail() {
+      return request.auth.token.email;
+    }
+
+    // Google confirms the address; an e-mail typed into a password sign-up
+    // form is not proof of owning it.
+    function emailVerified() {
+      return request.auth.token.email_verified == true;
+    }
+
+    function profilePath() {
+      return /databases/$(database)/documents/users/$(uid());
+    }
+
+    function hasProfile() {
+      return isSignedIn() && exists(profilePath());
+    }
+
+    function profile() {
+      return get(profilePath()).data;
+    }
+
+    function isAdmin() {
+      return hasProfile() && profile().role == 'ADMIN' && profile().status == 'ACTIVE';
+    }
+
+    // A signed-in user whose account has not been disabled by an administrator.
+    function isActiveUser() {
+      return hasProfile() && profile().status == 'ACTIVE';
+    }
+
+    // Always-admin e-mails. Keep in sync with ADMIN_EMAILS in
+    // src/firebase/firebaseConfig.js.
+    function isListedAdminEmail() {
+      return isSignedIn()
+        && request.auth.token.email is string
+        && request.auth.token.email.lower() in [
+          'jangambharath017@gmail.com',
+          'akumatha@gmail.com'
+        ];
+    }
+
+    // The approval an administrator recorded for the caller's e-mail before
+    // the account had signed in.
+    function approvalPath() {
+      return /databases/$(database)/documents/accessList/$(request.auth.token.email.lower());
+    }
+
+    function isApprovedEmail() {
+      return isSignedIn()
+        && request.auth.token.email is string
+        && emailVerified()
+        && exists(approvalPath())
+        && get(approvalPath()).data.status == 'ACTIVE';
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function changed() {
+      return incoming().diff(resource.data).affectedKeys();
+    }
+
+    function isNonEmptyString(value, maxLen) {
+      return value is string && value.size() > 0 && value.size() <= maxLen;
+    }
+
+    function isMobile(value) {
+      return value is string && value.matches('^[6-9][0-9]{9}$');
+    }
+
+    // -----------------------------------------------------------------------
+    // users
+    // -----------------------------------------------------------------------
+    match /users/{userId} {
+
+      // A Google account has no mobile number until its owner adds one.
+      function validProfileShape() {
+        return incoming().uid == userId
+          && isNonEmptyString(incoming().name, 120)
+          && incoming().email == authEmail()
+          && (incoming().mobile == '' || isMobile(incoming().mobile))
+          && incoming().status in ['ACTIVE', 'PENDING']
+          && incoming().role in ['USER', 'ADMIN'];
+      }
+
+      // What a brand new account may be created as. Signing in with Google
+      // is open to anyone, so the default is an operator who can see nothing
+      // until an administrator approves the account.
+      function validAccessOnCreate() {
+        return
+          // Not approved yet: waits for an administrator.
+          (incoming().status == 'PENDING' && incoming().role == 'USER')
+          // Approved in advance: active, with exactly the role that was chosen.
+          || (incoming().status == 'ACTIVE'
+              && isApprovedEmail()
+              && incoming().role == get(approvalPath()).data.role)
+          // A permanent administrator. There is no other way to become one
+          // without an existing administrator granting it.
+          || (incoming().status == 'ACTIVE'
+              && incoming().role == 'ADMIN'
+              && isListedAdminEmail()
+              && emailVerified());
+      }
+
+      // Fields a user is allowed to change on their own profile.
+      function selfEditableKeys() {
+        return ['name', 'mobile', 'photoURL', 'provider', 'lastLoginAt', 'lastActiveAt',
+                'loginCount', 'updatedAt', 'lastDevice'];
+      }
+
+      // Allow-listed administrators may promote themselves at any time, which
+      // also approves the account if it was still waiting. It never re-enables
+      // an account another administrator has disabled.
+      function selfPromoteListedAdmin() {
+        return isListedAdminEmail()
+          && emailVerified()
+          && resource.data.status != 'DISABLED'
+          && (resource.data.role != 'ADMIN' || resource.data.status != 'ACTIVE')
+          && incoming().role == 'ADMIN'
+          && incoming().status == 'ACTIVE'
+          && changed().hasOnly(['role', 'status', 'updatedAt', 'bootstrappedAt']);
+      }
+
+      allow get: if isSignedIn() && (userId == uid() || isAdmin());
+      allow list: if isAdmin();
+
+      allow create: if isSignedIn()
+        && userId == uid()
+        && validProfileShape()
+        && validAccessOnCreate();
+
+      allow update: if isSignedIn() && (
+        // Administrators may manage any profile, but may not demote or disable
+        // themselves (which would lock the console out of its last admin).
+        (isAdmin() && (userId != uid()
+                       || (incoming().role == 'ADMIN' && incoming().status == 'ACTIVE')))
+        // Owners may edit their own safe fields ...
+        || (userId == uid() && changed().hasOnly(selfEditableKeys()))
+        // ... or an allow-listed administrator claiming their role.
+        || (userId == uid() && selfPromoteListedAdmin())
+      );
+
+      // Never allow an administrator to delete their own account.
+      allow delete: if isAdmin() && userId != uid();
+    }
+
+    // -----------------------------------------------------------------------
+    // accessList - Google accounts approved before their first sign-in
+    // -----------------------------------------------------------------------
+    match /accessList/{emailId} {
+
+      function validApproval() {
+        return incoming().email == emailId
+          && emailId == emailId.lower()
+          && emailId.matches('^[^@/]+@[^@/]+[.][^@/]+$')
+          && emailId.size() <= 254
+          && incoming().role in ['USER', 'ADMIN']
+          && incoming().status == 'ACTIVE';
+      }
+
+      // The account itself may look up (only) its own approval while signing in.
+      allow get: if isAdmin()
+        || (isSignedIn()
+            && request.auth.token.email is string
+            && emailId == request.auth.token.email.lower());
+      allow list: if isAdmin();
+
+      allow create, update: if isAdmin() && validApproval();
+
+      // Withdrawn by an administrator, or consumed by the approved account in
+      // the same batch that creates its profile.
+      allow delete: if isAdmin()
+        || (isSignedIn()
+            && request.auth.token.email is string
+            && emailId == request.auth.token.email.lower()
+            && existsAfter(profilePath()));
+    }
+
+    // -----------------------------------------------------------------------
+    // loginSessions - append-only
+    // -----------------------------------------------------------------------
+    match /loginSessions/{sessionId} {
+      allow get: if isSignedIn() && (resource.data.userId == uid() || isAdmin());
+      // Non-administrators must scope the query with
+      // where('userId', '==', currentUid) for this rule to be satisfiable.
+      allow list: if isSignedIn() && (isAdmin() || resource.data.userId == uid());
+
+      allow create: if isSignedIn()
+        && incoming().userId == uid()
+        && incoming().email == authEmail()
+        && incoming().loginAt == request.time;
+
+      allow update, delete: if false;
+    }
+
+    // -----------------------------------------------------------------------
+    // receipts
+    // -----------------------------------------------------------------------
+    match /receipts/{receiptId} {
+
+      function validReceipt() {
+        return isNonEmptyString(incoming().orderId, 64)
+          && isNonEmptyString(incoming().customerName, 120)
+          && isMobile(incoming().customerMobile)
+          && isNonEmptyString(incoming().driverName, 120)
+          && isMobile(incoming().driverMobile)
+          && isNonEmptyString(incoming().vehicleNo, 24)
+          && incoming().vehicleTrip in ['Trucktor', '8 Tier', '10 Tier', '12 Tier', '14 Tier', '16 Tier']
+          && incoming().sandQuantity is number
+          && incoming().sandQuantity > 0
+          && incoming().status in ['ACTIVE', 'CANCELLED'];
+      }
+
+      allow get: if isSignedIn()
+        && (isAdmin() || resource.data.createdBy == uid());
+
+      // Non-administrators must scope their query with
+      // where('createdBy', '==', currentUid) for this rule to be satisfiable.
+      allow list: if isSignedIn()
+        && (isAdmin() || resource.data.createdBy == uid());
+
+      allow create: if isActiveUser()
+        && incoming().createdBy == uid()
+        && incoming().createdByEmail == authEmail()
+        && incoming().status == 'ACTIVE'
+        && validReceipt();
+
+      allow update: if isSignedIn() && validReceipt() && (
+        // Administrators may edit or cancel any receipt.
+        isAdmin()
+        // Owners may correct their own receipt but may not re-assign ownership
+        // and may not change its status (cancelling is an administrator act).
+        || (isActiveUser()
+            && resource.data.createdBy == uid()
+            && incoming().createdBy == resource.data.createdBy
+            && incoming().status == resource.data.status)
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // -----------------------------------------------------------------------
+    // counters - small aggregate documents that power the real-time dashboard
+    // -----------------------------------------------------------------------
+    match /counters/{counterId} {
+
+      function counterKeys() {
+        return ['totalReceipts', 'activeReceipts', 'cancelledReceipts',
+                'totalSandQuantity', 'totalVehicleTrips', 'totalUsers',
+                'activeUsers', 'disabledUsers', 'totalLoginSessions',
+                'uniqueLoginUsers', 'vehicleTrips',
+                'receipts', 'sandQuantity', 'logins',
+                'seq', 'year', 'date', 'updatedAt'];
+      }
+
+      // Approved accounts only: an account waiting for approval sees nothing.
+      allow get, list: if isActiveUser();
+      allow create, update: if isActiveUser()
+        && incoming().keys().hasOnly(counterKeys());
+      allow delete: if false;
+    }
+
+    // -----------------------------------------------------------------------
+    // settings
+    // -----------------------------------------------------------------------
+    match /settings/{settingId} {
+      allow get, list: if isSignedIn();
+
+      allow create, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // -----------------------------------------------------------------------
+    // auditLogs - append-only, readable by administrators
+    // -----------------------------------------------------------------------
+    match /auditLogs/{logId} {
+      allow get, list: if isAdmin();
+      allow create: if isSignedIn()
+        && incoming().userId == uid()
+        && incoming().action is string;
+      allow update, delete: if false;
+    }
+
+    // -----------------------------------------------------------------------
+    // verifications - public QR lookup, always consistent with its receipt
+    // -----------------------------------------------------------------------
+    match /verifications/{token} {
+
+      function linkedReceiptPath() {
+        return /databases/$(database)/documents/receipts/$(incoming().receiptId);
+      }
+
+      // The receipt (as it will be after this batch) must point back at this
+      // token and agree on the fields the public page shows, so nobody can
+      // publish a verification that says something the receipt does not.
+      function consistentWithReceipt() {
+        return incoming().receiptId is string
+          && existsAfter(linkedReceiptPath())
+          && getAfter(linkedReceiptPath()).data.verifyToken == token
+          && getAfter(linkedReceiptPath()).data.status == incoming().status
+          && getAfter(linkedReceiptPath()).data.createdBy == incoming().createdBy
+          && getAfter(linkedReceiptPath()).data.vehicleNo == incoming().vehicleNo
+          && getAfter(linkedReceiptPath()).data.sandQuantity == incoming().sandQuantity;
+      }
+
+      allow get: if true;
+      allow list: if false;
+
+      allow create, update: if isActiveUser()
+        && consistentWithReceipt()
+        && (isAdmin() || incoming().createdBy == uid());
+
+      allow delete: if isAdmin();
+    }
+
+    // -----------------------------------------------------------------------
+    // Anything not explicitly matched above is denied.
+    // -----------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

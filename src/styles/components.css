@@ -1,0 +1,572 @@
+/* ==========================================================================
+   Shared components - type, cards, buttons, forms, badges, alerts, toasts,
+   loaders, empty states and dialogs. Built from the tokens in theme.css.
+
+   The look: white rounded panels floating on sand, navy headings, pill
+   buttons, soft filled form fields.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- type -- */
+
+.page-title {
+  @apply flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[26px] leading-tight font-bold tracking-tight text-navy-900;
+}
+
+.page-subtitle {
+  @apply mt-1 max-w-[68ch] text-[13.5px] leading-relaxed text-slate-600;
+}
+
+.section-title {
+  @apply flex items-center gap-2.5 text-[15px] font-semibold text-navy-900;
+}
+
+/* The heading icon sits in a solid blue disc. */
+.section-title > svg {
+  @apply shrink-0 rounded-full bg-brand-600 text-white;
+  box-sizing: content-box;
+  padding: 7px;
+}
+
+/* ---------------------------------------------------------------- cards -- */
+
+.card {
+  @apply rounded-[20px] bg-white shadow-card;
+  border: 1px solid rgb(255 255 255 / 0.9);
+  outline: 1px solid rgb(15 37 87 / 0.06);
+  outline-offset: -1px;
+}
+
+.card__header {
+  @apply flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-6 py-4;
+}
+
+.card__body {
+  @apply p-6;
+}
+
+.card__body--flush {
+  @apply p-0;
+}
+
+/* Tables and feeds that run to the card edge follow its rounded corners. */
+.card > .card__body--flush:last-child,
+.card > .feed:last-child {
+  @apply overflow-hidden rounded-b-[20px];
+}
+
+.card__footer {
+  @apply rounded-b-[20px] border-t border-slate-100 bg-slate-50 px-6 py-4;
+}
+
+/* -------------------------------------------------------------- buttons -- */
+/* Pills. */
+
+.btn {
+  @apply inline-flex h-[42px] cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent bg-slate-100 px-5 text-[13.5px] font-semibold whitespace-nowrap text-slate-800 no-underline select-none;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.btn:hover:not(:disabled) {
+  @apply bg-slate-200 no-underline;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  @apply cursor-not-allowed opacity-55;
+}
+.btn > svg {
+  @apply shrink-0;
+}
+
+.btn--primary {
+  @apply border-brand-700 text-white shadow-brand;
+  background-image: linear-gradient(135deg, var(--color-brand-600), var(--color-navy-700));
+}
+.btn--primary:hover:not(:disabled) {
+  @apply border-navy-800;
+  background-image: linear-gradient(135deg, var(--color-brand-700), var(--color-navy-800));
+  transform: translateY(-1px);
+}
+
+.btn--success {
+  @apply border-green-700 text-white;
+  background-image: linear-gradient(135deg, var(--color-green-600), var(--color-green-800));
+}
+.btn--success:hover:not(:disabled) {
+  background-image: linear-gradient(135deg, var(--color-green-700), var(--color-green-900));
+}
+
+.btn--danger {
+  @apply border-red-700 bg-red-600 text-white shadow-xs;
+}
+.btn--danger:hover:not(:disabled) {
+  @apply bg-red-700;
+}
+
+.btn--outline {
+  @apply border-slate-300 bg-white text-navy-900 shadow-xs;
+}
+.btn--outline:hover:not(:disabled) {
+  @apply border-brand-500 bg-white text-brand-700;
+}
+
+.btn--ghost {
+  @apply bg-transparent text-slate-600;
+}
+.btn--ghost:hover:not(:disabled) {
+  @apply bg-slate-100 text-navy-900;
+}
+
+/* For a dark or image surface, such as the dashboard banner. */
+.btn--light {
+  @apply border-white bg-white text-navy-900 shadow-xs;
+}
+.btn--light:hover:not(:disabled) {
+  @apply bg-sand-50;
+}
+
+.btn--glass {
+  @apply text-white;
+  border-color: rgb(255 255 255 / 0.36);
+  background: rgb(255 255 255 / 0.14);
+  backdrop-filter: blur(6px);
+}
+.btn--glass:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.26);
+}
+
+.btn--sm {
+  @apply h-[34px] gap-1.5 px-3.5 text-[12.5px];
+}
+.btn--lg {
+  @apply h-[50px] px-7 text-[15px];
+}
+.btn--block {
+  @apply w-full;
+}
+
+.btn-group {
+  @apply flex flex-wrap gap-2.5;
+}
+
+/* ---------------------------------------------------------------- forms -- */
+/* Filled fields: a soft tinted well that turns white and outlined on focus. */
+
+.form-grid {
+  @apply grid gap-x-5 gap-y-5;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.field {
+  @apply flex min-w-0 flex-col gap-2;
+}
+.field--full {
+  @apply col-span-full;
+}
+
+.field__label {
+  @apply text-[11.5px] font-semibold tracking-[0.06em] text-slate-500 uppercase;
+}
+.field__label .req {
+  @apply ml-0.5 text-red-600;
+}
+
+.field__hint {
+  @apply text-xs text-slate-500;
+}
+
+.field__error {
+  @apply flex items-center gap-1 text-xs font-medium text-red-600;
+}
+
+.input,
+.select,
+.textarea {
+  @apply block w-full rounded-[14px] border-[1.5px] border-transparent px-4 text-sm font-medium text-navy-900;
+  background-color: #eef2f9;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.input,
+.select {
+  height: 46px;
+}
+
+.textarea {
+  @apply min-h-[88px] resize-y py-3;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  @apply font-normal text-slate-400;
+}
+
+.input:hover:not(:disabled),
+.select:hover:not(:disabled),
+.textarea:hover:not(:disabled) {
+  background-color: #e6ecf6;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  @apply border-brand-500 bg-white outline-hidden;
+  box-shadow: 0 0 0 4px rgb(59 130 246 / 0.18);
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled {
+  @apply cursor-not-allowed text-slate-500;
+  background-color: #e8ebf0;
+}
+
+/* Generated values (e.g. Dispatch ID): locked, but still selectable/copyable. */
+.input[readonly] {
+  @apply cursor-default border-dashed border-sand-400 bg-sand-50 font-semibold text-navy-900;
+}
+
+.input.is-invalid,
+.select.is-invalid,
+.textarea.is-invalid {
+  @apply border-red-500 bg-red-50;
+}
+.input.is-invalid:focus,
+.select.is-invalid:focus,
+.textarea.is-invalid:focus {
+  box-shadow: 0 0 0 4px rgb(239 68 68 / 0.16);
+}
+
+.select {
+  @apply cursor-pointer appearance-none pr-10;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231d4ed8' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.input-group {
+  @apply relative flex items-center;
+}
+.input-group .input {
+  @apply pl-11;
+}
+.input-group__icon {
+  @apply pointer-events-none absolute left-4 grid place-items-center text-slate-400;
+  transition: color 0.15s ease;
+}
+.input-group:focus-within .input-group__icon {
+  @apply text-brand-600;
+}
+.input-group--action .input {
+  @apply pr-12;
+}
+.input-group__action {
+  @apply absolute right-2 grid size-8 cursor-pointer place-items-center rounded-full text-slate-500;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.input-group__action:hover {
+  @apply bg-white text-navy-900;
+}
+
+.checkbox {
+  @apply flex cursor-pointer items-start gap-2.5 text-[13px] text-slate-700;
+}
+.checkbox input {
+  @apply mt-px size-[18px] shrink-0 cursor-pointer appearance-none rounded-md border-[1.5px] border-slate-300 bg-white;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+.checkbox input:hover {
+  @apply border-brand-500;
+}
+.checkbox input:checked {
+  @apply border-brand-700 bg-brand-600;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='5 12.5 10 17.5 19 7'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 13px 13px;
+}
+
+/* A titled section of a form: a heading with a rule under it, no box. */
+.fieldset {
+  @apply mb-8 min-w-0;
+}
+
+/* Floated so it lays out like an ordinary heading in every browser. */
+.fieldset > legend {
+  @apply float-left mb-5 flex w-full items-center gap-2.5 border-b-2 border-slate-100 pb-3 text-[15px] font-bold text-navy-900;
+}
+.fieldset > legend + * {
+  clear: both;
+}
+
+.fieldset > legend > svg {
+  @apply shrink-0 rounded-full bg-brand-600 text-white;
+  box-sizing: content-box;
+  padding: 7px;
+}
+
+/* --------------------------------------------------------------- badges -- */
+
+.badge {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11.5px] leading-5 font-semibold tracking-normal whitespace-nowrap;
+  box-shadow: inset 0 0 0 1px var(--badge-ring, transparent);
+}
+
+/* State badges lead with a dot; role badges carry their own icon. */
+.badge--active::before,
+.badge--cancelled::before,
+.badge--disabled::before,
+.badge--pending::before,
+.badge--invited::before {
+  content: '';
+  @apply size-1.5 shrink-0 rounded-full bg-current;
+}
+
+.badge--active {
+  @apply bg-green-50 text-green-800;
+  --badge-ring: rgb(22 163 74 / 0.22);
+}
+.badge--cancelled {
+  @apply bg-red-50 text-red-700;
+  --badge-ring: rgb(220 38 38 / 0.2);
+}
+.badge--disabled {
+  @apply bg-slate-100 text-slate-600;
+  --badge-ring: rgb(100 116 139 / 0.22);
+}
+/* Administrator is gold so it reads differently from Operator (blue). */
+.badge--admin {
+  @apply bg-amber-50 text-amber-800;
+  --badge-ring: rgb(217 119 6 / 0.28);
+}
+.badge--user {
+  @apply bg-blue-50 text-blue-700;
+  --badge-ring: rgb(37 99 235 / 0.18);
+}
+.badge--neutral {
+  @apply bg-slate-100 text-slate-600;
+  --badge-ring: rgb(100 116 139 / 0.18);
+}
+/* Signed in with Google, waiting for an administrator. */
+.badge--pending {
+  @apply bg-amber-50 text-amber-800;
+  --badge-ring: rgb(217 119 6 / 0.3);
+}
+/* Approved in advance; the Google account has not signed in yet. */
+.badge--invited {
+  @apply bg-blue-50 text-blue-700;
+  --badge-ring: rgb(37 99 235 / 0.2);
+}
+
+/* --------------------------------------------------------------- alerts -- */
+
+.alert {
+  @apply flex items-start gap-3 rounded-2xl border border-l-4 bg-white px-4 py-3 text-[13px] leading-relaxed shadow-xs;
+}
+
+.alert__icon {
+  @apply mt-0.5 shrink-0;
+}
+.alert__body {
+  @apply min-w-0;
+}
+
+.alert--error {
+  @apply border-red-200 border-l-red-500 bg-red-50 text-red-800;
+}
+.alert--info {
+  @apply border-blue-200 border-l-blue-500 bg-blue-50 text-blue-800;
+}
+.alert--warning {
+  @apply border-amber-200 border-l-amber-500 bg-amber-50 text-amber-900;
+}
+
+/* --------------------------------------------------------------- toasts -- */
+/* Dark, so a message is unmistakable against the light page. */
+
+.toast-stack {
+  @apply pointer-events-none fixed top-4 right-4 z-[1200] flex flex-col gap-2.5;
+  width: min(400px, calc(100vw - 32px));
+}
+
+.toast {
+  @apply pointer-events-auto flex animate-slide-in items-start gap-3 rounded-2xl bg-navy-900 p-3 text-white shadow-float;
+  border: 1px solid rgb(255 255 255 / 0.1);
+}
+
+.toast__icon {
+  @apply grid size-9 shrink-0 place-items-center rounded-full;
+  background: rgb(255 255 255 / 0.12);
+}
+.toast__message {
+  @apply min-w-0 flex-1 self-center text-[13px] font-medium text-white;
+  overflow-wrap: anywhere;
+}
+
+.toast__close {
+  @apply grid size-7 shrink-0 cursor-pointer place-items-center rounded-full;
+  color: rgb(255 255 255 / 0.6);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.toast__close:hover {
+  @apply text-white;
+  background: rgb(255 255 255 / 0.14);
+}
+
+.toast--success .toast__icon {
+  @apply bg-green-500 text-white;
+}
+.toast--error .toast__icon {
+  @apply bg-red-500 text-white;
+}
+.toast--info .toast__icon {
+  @apply bg-brand-500 text-white;
+}
+
+/* ------------------------------------------------------ loading & empty -- */
+
+/* Width, height and border width arrive inline from <Spinner size>. */
+.spinner {
+  @apply inline-block shrink-0 animate-spin rounded-full border-solid border-slate-200 border-t-brand-600;
+}
+
+/* On a filled button the brand-coloured arc would vanish into the fill. */
+.btn--primary .spinner,
+.btn--success .spinner,
+.btn--danger .spinner {
+  border-color: rgb(255 255 255 / 0.35);
+  border-top-color: #ffffff;
+}
+
+.loading-block {
+  @apply flex flex-col items-center justify-center gap-3 px-5 py-14 text-[13px] font-medium text-slate-600;
+}
+
+.skeleton {
+  @apply animate-shimmer rounded-lg;
+  background: linear-gradient(
+    90deg,
+    var(--color-slate-100) 25%,
+    var(--color-slate-200) 37%,
+    var(--color-slate-100) 63%
+  );
+  background-size: 400% 100%;
+}
+
+.skeleton-stack {
+  @apply flex flex-col gap-2.5;
+}
+
+.empty-state {
+  @apply flex flex-col items-center justify-center gap-1.5 px-6 py-14 text-center;
+}
+
+.empty-state__icon {
+  @apply mb-3 grid size-[72px] place-items-center rounded-full bg-sand-100 text-sand-600;
+  box-shadow:
+    0 0 0 1px var(--color-sand-300),
+    0 0 0 9px rgb(246 232 207 / 0.5);
+}
+
+.empty-state__title {
+  @apply text-base font-semibold text-navy-900;
+}
+.empty-state__message {
+  @apply max-w-sm text-[13px] leading-relaxed text-slate-500;
+}
+.empty-state__action {
+  @apply mt-4;
+}
+
+/* --------------------------------------------------------------- dialog -- */
+
+.dialog-backdrop {
+  @apply fixed inset-0 z-[1100] grid animate-fade-in place-items-center p-5;
+  background: rgb(10 26 68 / 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.dialog {
+  @apply w-full max-w-[460px] animate-pop-in overflow-hidden rounded-[24px] bg-white shadow-float;
+}
+
+.dialog__header {
+  @apply flex items-start gap-3.5 px-6 pt-6 pb-1;
+}
+
+.dialog__icon {
+  @apply grid size-11 shrink-0 place-items-center rounded-full;
+}
+.dialog__icon--danger {
+  @apply bg-red-50 text-red-600;
+}
+/* A warning is amber whatever the brand colour is. */
+.dialog__icon--warning {
+  @apply bg-amber-50 text-amber-600;
+}
+.dialog__icon--info {
+  @apply bg-blue-50 text-blue-600;
+}
+
+.dialog__title {
+  @apply self-center text-base font-semibold text-navy-900;
+  overflow-wrap: anywhere;
+}
+
+/* Lines up with the title: 24px gutter + 44px icon + 14px gap. */
+.dialog__body {
+  @apply pt-1.5 pr-6 pb-6 pl-[82px] text-[13.5px] leading-relaxed text-slate-600;
+}
+
+.dialog__footer {
+  @apply flex justify-end gap-2.5 border-t border-slate-100 bg-slate-50 px-6 py-4;
+}
+
+@media (max-width: 768px) {
+  .card__header {
+    @apply px-4;
+  }
+  .card__body {
+    @apply p-4;
+  }
+  .card__body--flush {
+    @apply p-0;
+  }
+  .card__footer {
+    @apply px-4;
+  }
+}
+
+@media (max-width: 520px) {
+  .dialog__body {
+    @apply pl-6;
+  }
+  .dialog__footer {
+    @apply flex-col-reverse;
+  }
+  .dialog__footer .btn {
+    @apply w-full;
+  }
+  /* One field per row, and nothing narrower than a thumb. */
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .card__footer .btn-group .btn {
+    @apply flex-1;
+  }
+}

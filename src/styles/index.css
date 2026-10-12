@@ -1,0 +1,29 @@
+/* ==========================================================================
+   AP SAND MANAGEMENT SYSTEM - stylesheet entry
+
+   Tailwind CSS v4. The design tokens are in theme.css; the named parts of
+   the interface (.btn, .card, .data-table ...) are composed from Tailwind
+   utilities with @apply in the files below, and one-off spacing and layout
+   is written as utility classes directly in the JSX.
+   ========================================================================== */
+
+@import 'tailwindcss';
+@import './theme.css';
+
+@import './base.css' layer(base);
+
+@import './components.css' layer(components);
+@import './layout.css' layer(components);
+@import './auth.css' layer(components);
+@import './dashboard.css' layer(components);
+@import './tables.css' layer(components);
+@import './pages.css' layer(components);
+
+/* --------------------------------------------------------------------------
+   Outside the Tailwind layers on purpose - see the note at the top of each.
+   Unlayered rules always win over layered ones, so the receipt on paper and
+   the public verification page can never be restyled by accident.
+   -------------------------------------------------------------------------- */
+@import './receipt.css';
+@import './verify.css';
+@import './print.css';

@@ -1,0 +1,273 @@
+/* ==========================================================================
+   Data tables, filter bars and pagination
+
+   A filter toolbar, the table and its footer are three siblings that read as
+   one card: each drops the corners and edge it shares with its neighbour.
+   ========================================================================== */
+
+.toolbar {
+  @apply flex flex-wrap items-center gap-2.5 rounded-t-[20px] border-b border-slate-100 bg-white px-5 py-4;
+}
+
+/* An error banner between the toolbar and the table splits the card, so the
+   toolbar closes itself off. */
+.toolbar:has(+ .alert) {
+  @apply rounded-b-[20px] shadow-card;
+}
+
+.toolbar .input,
+.toolbar .select {
+  @apply h-10;
+}
+
+.toolbar__spacer {
+  @apply min-w-0 flex-1;
+}
+
+.search-box {
+  @apply relative max-w-[420px] min-w-[200px];
+  flex: 1 1 260px;
+}
+.search-box .input {
+  @apply pr-9 pl-10;
+}
+/* The component draws its own clear button. */
+.search-box .input::-webkit-search-cancel-button {
+  @apply hidden;
+}
+.search-box__icon {
+  @apply pointer-events-none absolute top-1/2 left-3.5 grid -translate-y-1/2 place-items-center text-slate-400;
+  transition: color 0.15s ease;
+}
+.search-box:focus-within .search-box__icon {
+  @apply text-brand-600;
+}
+.search-box__clear {
+  @apply absolute top-1/2 right-2 grid size-6 -translate-y-1/2 cursor-pointer place-items-center rounded-md text-slate-400;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.search-box__clear:hover {
+  @apply bg-slate-100 text-slate-800;
+}
+
+.filter-select {
+  @apply min-w-[150px];
+}
+.filter-select .select {
+  @apply text-[13px];
+}
+
+/* ---------------------------------------------------------------- table -- */
+
+.table-wrap {
+  @apply overflow-hidden rounded-[20px] bg-white shadow-card;
+}
+
+.toolbar + .table-wrap {
+  @apply rounded-t-none;
+}
+
+.table-wrap:has(+ .table-footer) {
+  @apply rounded-b-none;
+}
+
+/* Section 27: tables scroll inside their own container, never the page. */
+.table-scroll {
+  @apply w-full overflow-x-auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+  @apply w-full min-w-[760px] border-collapse text-[13px];
+}
+
+.data-table thead th {
+  @apply sticky top-0 z-[2] bg-navy-900 px-4 py-3.5 text-left text-[10.5px] font-semibold tracking-[0.08em] whitespace-nowrap text-white uppercase;
+}
+
+/* Paints the hairline gaps between the sticky header cells. */
+.data-table thead {
+  @apply bg-navy-900;
+}
+
+.data-table th .th-inner {
+  @apply inline-flex items-center gap-1;
+}
+
+.data-table tbody td {
+  @apply border-b border-slate-100 px-4 py-3.5 align-middle text-slate-700;
+  transition: background-color 0.12s ease;
+}
+
+.data-table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.data-table tbody tr:hover td {
+  @apply bg-sand-50;
+}
+/* A marker on the row under the pointer. */
+.data-table tbody tr:hover td:first-child {
+  box-shadow: inset 4px 0 0 var(--color-sand-400);
+}
+
+.data-table tbody td strong {
+  @apply font-semibold text-slate-900;
+}
+
+/* Few-column tables (e.g. the dashboard's operator counts) fit a phone
+   instead of scrolling sideways. */
+.data-table--fit {
+  @apply min-w-0;
+}
+
+.data-table tfoot th {
+  @apply border-t-2 border-navy-900 bg-sand-50 px-4 py-3 text-left font-bold text-navy-900;
+}
+
+/* The row's buttons stay in view while a wide table scrolls sideways. */
+.data-table .cell-actions {
+  @apply sticky right-0 bg-white whitespace-nowrap;
+  box-shadow: -10px 0 10px -10px rgb(15 23 42 / 0.14);
+}
+.data-table thead th.cell-actions {
+  @apply z-[3] bg-navy-900;
+}
+.data-table td.cell-actions:empty,
+.data-table td.cell-actions:has(> div:empty) {
+  box-shadow: none;
+}
+
+/* Number columns */
+.data-table td.text-right,
+.data-table th.text-right {
+  @apply tabular-nums;
+}
+
+.cell-stack {
+  @apply flex min-w-0 flex-col gap-0.5;
+}
+.cell-stack__main {
+  @apply font-semibold text-navy-900;
+}
+a.cell-stack__main {
+  @apply text-brand-700;
+}
+.cell-stack__sub {
+  @apply text-[11.5px] text-slate-500;
+}
+
+/* Rows per page and the count sit left, the page controls right. */
+.table-footer {
+  @apply flex flex-wrap items-center gap-x-5 gap-y-3 rounded-b-[20px] border-t border-slate-100 bg-white px-5 py-3.5 shadow-card;
+}
+
+.table-footer__info {
+  @apply text-[12.5px] text-slate-500;
+}
+.table-footer__info strong {
+  @apply font-semibold text-slate-800;
+}
+
+.pagination {
+  @apply ml-auto flex items-center gap-2;
+}
+
+.pagination__page {
+  @apply px-2.5 text-[12.5px] font-semibold text-slate-700 tabular-nums;
+}
+
+.page-size {
+  @apply flex items-center gap-2 text-[12.5px] text-slate-500;
+}
+.page-size .select {
+  @apply h-8 w-auto rounded-lg py-0 pr-8 pl-2.5 text-[12.5px];
+  background-position: right 9px center;
+}
+
+/* -------------------------------------------------------- mobile cards -- */
+
+.record-cards {
+  @apply hidden flex-col gap-3 p-3;
+}
+
+.record-card {
+  @apply overflow-hidden rounded-2xl border border-slate-200 bg-white;
+}
+
+.record-card__head {
+  @apply flex items-center justify-between gap-2.5 bg-navy-900 px-3.5 py-3;
+}
+
+.record-card__id {
+  @apply font-mono text-[12.5px] font-bold text-white;
+  overflow-wrap: anywhere;
+}
+.record-card__body {
+  @apply grid gap-2 px-3.5 py-3;
+}
+
+.record-card__row {
+  @apply grid items-baseline gap-2.5 text-[12.5px];
+  grid-template-columns: 108px 1fr;
+}
+.record-card__row dt {
+  @apply font-medium text-slate-500;
+}
+.record-card__row dd {
+  @apply font-semibold text-slate-900;
+  overflow-wrap: anywhere;
+}
+
+.record-card__actions {
+  @apply flex flex-wrap gap-1.5 border-t border-slate-200 bg-slate-50 px-3.5 py-2.5;
+}
+.record-card__actions:empty {
+  @apply hidden;
+}
+.record-card__actions .btn {
+  @apply flex-1;
+}
+
+@media (max-width: 860px) {
+  .data-table--responsive {
+    @apply hidden;
+  }
+  .record-cards {
+    @apply flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    @apply p-3;
+  }
+  .search-box {
+    @apply max-w-none;
+    flex-basis: 100%;
+  }
+  .filter-select {
+    @apply min-w-0;
+    flex: 1 1 140px;
+  }
+  .table-footer {
+    @apply justify-center;
+  }
+  .pagination {
+    @apply ml-0;
+  }
+  .page-size {
+    @apply hidden;
+  }
+}
+
+/* Tighter cells so a small table still fits a phone without scrolling. */
+@media (max-width: 520px) {
+  .data-table thead th,
+  .data-table tbody td,
+  .data-table tfoot th {
+    @apply px-3;
+  }
+}

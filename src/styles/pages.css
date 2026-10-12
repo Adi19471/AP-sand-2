@@ -1,0 +1,183 @@
+/* ==========================================================================
+   Page pieces - receipt preview stage, Scan QR and Settings.
+
+   The receipt document itself (.receipt-sheet and everything inside it) is
+   not here: it lives in receipt.css, outside the Tailwind layers, because
+   the print and PDF pipeline depends on it staying exactly as it is.
+   ========================================================================== */
+
+/* ------------------------------------------------- receipt preview stage */
+
+/* A cutting mat behind the paper. */
+.receipt-stage {
+  @apply flex flex-col items-center gap-4 rounded-[20px] px-3 pt-5 pb-8 shadow-card;
+  /* The paper lies on the sand. */
+  border: 1px solid rgb(255 255 255 / 0.9);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.1)),
+    url('/sand-bg.svg') center bottom / cover no-repeat,
+    var(--color-sand-100);
+}
+
+.receipt-actions {
+  @apply flex flex-wrap items-center justify-center gap-2 rounded-[24px] bg-white p-2 shadow-card;
+}
+.receipt-actions .select {
+  @apply h-10 w-auto;
+}
+
+.receipt-hint {
+  @apply max-w-[440px] rounded-2xl bg-white px-4 py-3 text-center text-xs leading-relaxed text-slate-600 shadow-xs;
+}
+.receipt-hint strong {
+  @apply font-semibold text-slate-800;
+}
+
+.preview-layout {
+  @apply grid items-start gap-5;
+  grid-template-columns: minmax(0, 1fr) 360px;
+}
+
+.preview-summary {
+  @apply flex flex-col gap-4;
+}
+
+.summary-list {
+  @apply grid grid-cols-2 gap-2.5;
+}
+
+.summary-list__row {
+  @apply flex min-w-0 flex-col gap-1 rounded-2xl bg-slate-50 px-3.5 py-3 text-[13px];
+}
+.summary-list__row dt {
+  @apply text-[10.5px] font-semibold tracking-[0.08em] text-slate-500 uppercase;
+}
+.summary-list__row dd {
+  @apply font-semibold text-navy-900;
+  overflow-wrap: anywhere;
+}
+
+.success-banner {
+  @apply flex items-start gap-3.5 rounded-2xl border border-green-200 px-5 py-4;
+  background-image: linear-gradient(135deg, var(--color-green-50), #ffffff 70%);
+}
+
+.success-banner__icon {
+  @apply grid size-11 shrink-0 place-items-center rounded-full bg-green-100 text-green-700;
+  box-shadow: 0 0 0 5px rgb(220 252 231 / 0.55);
+}
+
+.success-banner__title {
+  @apply text-[15px] font-bold text-green-900;
+}
+.success-banner__text {
+  @apply mt-0.5 text-[13px] leading-relaxed text-green-800;
+}
+
+@media (max-width: 1080px) {
+  .preview-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .receipt-stage {
+    @apply px-2 pt-3.5 pb-5;
+  }
+  .receipt-actions .btn {
+    flex: 1 1 130px;
+  }
+}
+
+/* ------------------------------------------------------------ scan QR -- */
+
+.scan-layout {
+  @apply grid items-start gap-4;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+}
+
+.scan-viewport {
+  @apply relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-slate-900;
+  background-image: radial-gradient(70% 70% at 50% 40%, #1e293b, #020617);
+}
+
+.scan-viewport video {
+  @apply block size-full object-cover;
+}
+
+.scan-viewport:not(.is-live) video {
+  @apply invisible;
+}
+
+.scan-viewport__idle {
+  @apply absolute inset-0 flex flex-col items-center justify-center gap-2.5 text-[13px] font-medium text-slate-400;
+}
+
+/* Aiming square with a sweeping line so it is obvious the camera is live. */
+.scan-viewport__frame {
+  @apply absolute top-1/2 left-1/2 aspect-square overflow-hidden rounded-2xl border-[3px] border-brand-400;
+  width: min(62%, 260px);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 9999px rgb(2 6 23 / 0.42);
+}
+
+.scan-viewport__frame::after {
+  content: '';
+  @apply absolute right-[6%] left-[6%] h-0.5 bg-brand-400;
+  box-shadow: 0 0 12px var(--color-brand-400);
+  animation: scan-sweep 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes scan-sweep {
+  from {
+    top: 8%;
+  }
+  to {
+    top: 92%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-viewport__frame::after {
+    animation: none;
+    top: 50%;
+  }
+}
+
+@media (max-width: 860px) {
+  .scan-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------------------ settings -- */
+
+.settings-checks {
+  @apply grid gap-2.5;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+}
+
+/* Each vehicle trip is a selectable tile. */
+.settings-checks .checkbox {
+  @apply items-center rounded-xl border border-slate-200 bg-white px-3 py-2.5 font-medium shadow-xs;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+.settings-checks .checkbox:hover {
+  @apply border-slate-300;
+}
+.settings-checks .checkbox:has(input:checked) {
+  @apply border-brand-300 bg-brand-50 text-brand-900;
+}
+.settings-checks .checkbox input {
+  @apply mt-0;
+}
+
+.settings-admins {
+  @apply grid gap-2;
+}
+.settings-admins li {
+  @apply flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[13.5px] font-semibold text-slate-800;
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,166 @@
+/* ==========================================================================
+   Public QR verification page (/v/:token)
+
+   Plain CSS outside the Tailwind layers, kept as designed: the page mirrors
+   the department's own "Free Sand Information Details" page so a check-post
+   officer recognises it.
+   ========================================================================== */
+
+/* ---------------------------------------------- public verification -- */
+/* The page the receipt QR opens, laid out like the Department of Mines &
+   Geology "Free Sand Information Details" page. Mobile first: it is almost
+   always opened from a phone camera. */
+
+.sand-info {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.sand-info__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sand-info__brand { text-align: center; line-height: 1.2; min-width: 0; }
+
+.sand-info__title {
+  font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif-condensed, Arial, sans-serif;
+  font-stretch: condensed;
+  font-size: clamp(17px, 5.3vw, 27px);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #16863c;
+}
+
+.sand-info__dept { margin-top: 2px; font-size: clamp(12px, 3.6vw, 14px); font-weight: 600; color: #333333; }
+.sand-info__gov { margin-top: 1px; font-size: clamp(10.5px, 3vw, 12px); font-weight: 500; color: #333333; }
+
+.sand-info__banner {
+  display: grid;
+  place-items: center;
+  min-height: 190px;
+  padding: 28px 20px;
+  background:
+    radial-gradient(120% 90% at 50% 40%, #2b2b2b 0%, #151515 70%, #0d0d0d 100%);
+}
+
+.sand-info__banner h1 {
+  max-width: 250px;
+  margin: 0;
+  font-size: clamp(30px, 9.4vw, 38px);
+  font-weight: 800;
+  line-height: 1.38;
+  text-align: center;
+  color: #f7941d;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.sand-info__body {
+  width: min(560px, 100%);
+  margin: 0 auto;
+  padding: 20px 14px 32px;
+}
+
+.sand-info__search { display: grid; gap: 12px; }
+
+.sand-info__input {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  background: #efefef;
+  border: 1px solid #e2e2e2;
+  border-radius: 6px;
+}
+.sand-info__input:focus { outline: 2px solid #f7941d; outline-offset: 1px; }
+
+.sand-info__buttons { display: flex; gap: 10px; }
+
+.sand-info__btn {
+  min-width: 76px;
+  height: 32px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.sand-info__btn--get { background: #efc14d; }
+.sand-info__btn--clear { background: #e27272; }
+.sand-info__btn:hover { filter: brightness(0.95); }
+
+.sand-info__message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: #4b5563;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+.sand-info__message--bad { color: #b91c1c; background: #fef2f2; border-color: #fecaca; }
+
+.sand-info__card {
+  position: relative;
+  margin-top: 34px;
+  padding: 30px 16px 10px;
+  border: 1.5px solid #f7941d;
+  border-radius: 14px;
+}
+
+.sand-info__badge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 22px;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #ffffff;
+  background: linear-gradient(180deg, #fb8c00 0%, #f57c00 100%);
+  border-radius: 999px;
+  box-shadow: 0 3px 8px rgba(245, 124, 0, 0.35);
+  transform: translate(-50%, -50%);
+}
+/* The global `svg { max-width: 100% }` collapses an icon to zero width inside
+   a shrink-to-fit badge, so it opts out here. */
+.sand-info__badge svg { flex-shrink: 0; max-width: none; }
+
+.sand-info__group { margin: 0; padding: 6px 0 8px; }
+.sand-info__group + .sand-info__group { border-top: 1px solid #f7c98b; padding-top: 12px; }
+
+.sand-info__row {
+  display: grid;
+  grid-template-columns: minmax(0, 46%) 12px minmax(0, 1fr);
+  gap: 4px;
+  padding: 6px 0;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.sand-info__row dt { color: #444444; }
+.sand-info__row span { font-weight: 700; color: #222222; }
+.sand-info__row dd { margin: 0; font-weight: 700; color: #111111; overflow-wrap: anywhere; }
+
+.sand-info__foot { margin-top: 22px; font-size: 12.5px; text-align: center; }
+.sand-info__foot a { color: #6b7280; text-decoration: underline; }

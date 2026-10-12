@@ -1,0 +1,543 @@
+/* ==========================================================================
+   Dashboard, statistics cards, charts and reports
+   ========================================================================== */
+
+/* ------------------------------------------------------ welcome banner -- */
+
+.dash-hero {
+  @apply relative mb-4 flex flex-wrap items-center justify-between gap-5 overflow-hidden rounded-[24px] px-8 py-8 text-white shadow-raised;
+  /* Night sky over the dunes: navy on the left for the words, sand on the right. */
+  background:
+    linear-gradient(100deg, rgb(10 26 68 / 0.96) 0%, rgb(15 37 87 / 0.88) 38%, rgb(29 78 216 / 0.45) 68%, rgb(29 78 216 / 0) 100%),
+    url('/sand-dunes.svg') center bottom / cover no-repeat,
+    var(--color-navy-900);
+}
+
+.dash-hero > * {
+  @apply relative z-[1];
+}
+
+.dash-hero__eyebrow {
+  @apply flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.12em] text-sand-300 uppercase;
+}
+
+.dash-hero__title {
+  @apply mt-1.5 text-[32px] leading-tight font-bold tracking-tight text-white;
+}
+
+.dash-hero__sub {
+  @apply mt-1 text-sm;
+  color: rgb(255 255 255 / 0.84);
+}
+
+.dash-hero__actions {
+  @apply flex flex-wrap gap-2.5;
+}
+
+/* ------------------------------------------------------- shortcut tiles -- */
+
+.quick-grid {
+  @apply mb-5 grid gap-3;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.quick-tile {
+  @apply flex items-center gap-3 rounded-[18px] bg-white p-3.5 no-underline shadow-card;
+  border: 1px solid rgb(255 255 255 / 0.9);
+  transition:
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+.quick-tile:hover {
+  @apply -translate-y-0.5 no-underline shadow-raised;
+}
+
+.quick-tile__icon {
+  @apply grid size-11 shrink-0 place-items-center rounded-full bg-navy-900 text-sand-300;
+}
+
+.quick-tile__text {
+  @apply min-w-0 flex-1;
+}
+.quick-tile__label {
+  @apply block text-[13.5px] font-semibold text-navy-900;
+}
+.quick-tile__hint {
+  @apply block truncate text-[11.5px] text-slate-500;
+}
+
+.quick-tile__arrow {
+  @apply shrink-0 text-slate-300;
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+.quick-tile:hover .quick-tile__arrow {
+  @apply text-brand-600;
+  transform: translate(2px, -2px);
+}
+
+.stat-grid {
+  @apply mb-5 grid gap-4;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+}
+
+.stat-card {
+  @apply relative flex w-full items-start gap-4 overflow-hidden rounded-[20px] bg-white p-5 shadow-card;
+  --tone: var(--color-brand-600);
+  --tone-soft: var(--color-brand-50);
+  border: 1px solid rgb(255 255 255 / 0.9);
+  transition:
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+/* A bar of the card's tone along its foot. */
+.stat-card::after {
+  content: '';
+  @apply pointer-events-none absolute inset-x-0 bottom-0 h-1;
+  background: var(--tone);
+  opacity: 0.85;
+}
+
+.stat-card:hover {
+  @apply -translate-y-0.5 shadow-raised;
+}
+.stat-card:hover::after {
+  opacity: 1;
+}
+
+.stat-card__icon {
+  @apply grid size-12 shrink-0 place-items-center rounded-full text-white;
+  background: var(--tone);
+  box-shadow: 0 8px 16px -8px var(--tone);
+}
+
+.stat-card__body {
+  @apply min-w-0 flex-1;
+}
+
+.stat-card__label {
+  @apply text-[11.5px] font-semibold tracking-[0.06em] text-slate-500 uppercase;
+}
+
+.stat-card__value {
+  @apply mt-1.5 text-[28px] leading-none font-bold tracking-tight text-navy-900 tabular-nums;
+}
+
+.stat-card__value small {
+  @apply ml-1 text-[13px] font-semibold tracking-normal text-slate-500;
+}
+
+.stat-card__meta {
+  @apply mt-2 flex items-center gap-1 text-xs text-slate-500;
+}
+
+.stat-card--tone-amber {
+  --tone: var(--color-amber-600);
+  --tone-soft: var(--color-amber-50);
+}
+.stat-card--tone-green {
+  --tone: var(--color-green-700);
+  --tone-soft: var(--color-green-50);
+}
+.stat-card--tone-blue {
+  --tone: var(--color-blue-600);
+  --tone-soft: var(--color-blue-50);
+}
+.stat-card--tone-slate {
+  --tone: var(--color-slate-600);
+  --tone-soft: var(--color-slate-100);
+}
+.stat-card--tone-red {
+  --tone: var(--color-red-600);
+  --tone-soft: var(--color-red-50);
+}
+
+.stat-card__skeleton {
+  @apply mt-2 h-7 w-[72px];
+}
+
+/* --------------------------------------------------- featured metric ---- */
+
+.metric-focus {
+  @apply relative mb-5 flex flex-wrap items-center gap-6 overflow-hidden rounded-[24px] p-7 text-white shadow-raised;
+  background:
+    linear-gradient(100deg, rgb(10 26 68 / 0.97) 0%, rgb(15 37 87 / 0.9) 45%, rgb(15 37 87 / 0.55) 100%),
+    url('/sand-dunes.svg') center bottom / cover no-repeat,
+    var(--color-navy-900);
+}
+
+.metric-focus > * {
+  @apply relative z-[1];
+}
+
+.metric-focus__icon {
+  @apply grid size-16 shrink-0 place-items-center rounded-full bg-sand-300 text-navy-900;
+}
+
+.metric-focus__label {
+  @apply text-xs font-semibold tracking-[0.12em] uppercase;
+  color: rgb(255 255 255 / 0.62);
+}
+
+.metric-focus__value {
+  @apply mt-1 text-5xl leading-none font-extrabold tracking-tight tabular-nums;
+}
+
+.metric-focus__value small {
+  @apply ml-1.5 text-lg font-semibold tracking-normal opacity-70;
+}
+
+.metric-focus__hint {
+  @apply mt-2 text-[12.5px];
+  color: rgb(255 255 255 / 0.58);
+}
+
+.metric-focus__spacer {
+  @apply min-w-3 flex-1;
+}
+
+.metric-focus__aside {
+  @apply grid gap-3 pl-6;
+  border-left: 1px solid rgb(255 255 255 / 0.16);
+}
+
+.metric-focus__aside-item {
+  @apply text-xs;
+  color: rgb(255 255 255 / 0.62);
+}
+.metric-focus__aside-item strong {
+  @apply block text-lg leading-tight font-bold text-white tabular-nums;
+}
+
+/* ------------------------------------------------------ dashboard grid -- */
+
+.dash-grid {
+  @apply grid items-start gap-4;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+}
+
+.dash-grid + .dash-grid {
+  @apply mt-4;
+}
+
+.dash-grid--even {
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+}
+
+/* ------------------------------------------------------- vehicle chart -- */
+
+.trip-list {
+  @apply flex flex-col gap-3.5;
+}
+
+.trip-row {
+  @apply grid items-center gap-3;
+  grid-template-columns: 92px 1fr auto;
+}
+
+.trip-row__label {
+  @apply flex items-center gap-2 text-[12.5px] font-semibold text-slate-700;
+}
+
+.trip-row__swatch {
+  @apply size-2.5 shrink-0 rounded-[3px];
+}
+
+.trip-row__track {
+  @apply relative h-2.5 overflow-hidden rounded-full bg-slate-100;
+}
+
+.trip-row__fill {
+  @apply absolute inset-y-0 left-0 min-w-0.5 rounded-full;
+  transition: width 0.6s var(--ease-spring);
+}
+
+.trip-row__value {
+  @apply flex min-w-[88px] items-baseline justify-end gap-1.5 text-[12.5px] tabular-nums;
+}
+
+.trip-row__count {
+  @apply font-bold text-slate-900;
+}
+.trip-row__pct {
+  @apply min-w-[42px] text-right text-[11px] text-slate-500;
+}
+
+/* -------------------------------------------------------------- charts -- */
+
+.chart-card__legend {
+  @apply mt-5 flex flex-wrap gap-x-4 gap-y-2.5 border-t border-slate-200 pt-4;
+}
+
+.legend-item {
+  @apply flex items-center gap-2 text-xs text-slate-500;
+}
+.legend-item__dot {
+  @apply size-2.5 shrink-0 rounded-[3px];
+}
+.legend-item strong {
+  @apply font-semibold text-slate-900;
+}
+
+.bar-chart {
+  @apply block h-auto w-full overflow-visible;
+}
+.bar-chart text {
+  @apply font-sans;
+  fill: var(--color-slate-500);
+  font-size: 10px;
+}
+.bar-chart .grid-line {
+  stroke: var(--color-slate-200);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.bar-chart .axis-line {
+  stroke: var(--color-slate-300);
+  stroke-width: 1;
+}
+.bar-chart .bar {
+  transition: opacity 0.15s ease;
+}
+.bar-chart .bar:hover {
+  opacity: 0.8;
+}
+
+.donut-wrap {
+  @apply flex flex-wrap items-center justify-center gap-7;
+}
+
+.donut {
+  @apply shrink-0;
+}
+.donut__center-value {
+  @apply font-sans;
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--color-slate-900);
+}
+.donut__center-label {
+  @apply font-sans uppercase;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  fill: var(--color-slate-500);
+}
+
+.donut-legend {
+  @apply grid min-w-[190px] flex-1;
+}
+
+.donut-legend__row {
+  @apply grid items-center gap-2.5 border-b border-dashed border-slate-200 py-2 text-[12.5px] text-slate-700;
+  grid-template-columns: 12px 1fr auto auto;
+}
+.donut-legend__row:last-child {
+  @apply border-b-0;
+}
+.donut-legend__row span:nth-child(3) {
+  @apply font-bold text-slate-900 tabular-nums;
+}
+.donut-legend__row span:last-child {
+  @apply min-w-[44px] text-right text-[11.5px] text-slate-500 tabular-nums;
+}
+
+/* ------------------------------------------------- dashboard field bar -- */
+
+.field-select-bar {
+  @apply mb-5 flex flex-wrap items-center gap-3 rounded-[20px] bg-white px-5 py-3.5 shadow-card;
+  border: 1px solid rgb(255 255 255 / 0.9);
+}
+
+.field-select-bar__label {
+  @apply flex items-center gap-2 text-[12.5px] font-semibold text-slate-700;
+}
+.field-select-bar__label > svg {
+  @apply text-brand-600;
+}
+
+.field-select-bar .select {
+  @apply w-auto min-w-[224px];
+}
+.field-select-bar__spacer {
+  @apply flex-1;
+}
+
+.field-select-bar__stamp {
+  @apply flex items-center gap-1.5 text-[11.5px] text-slate-500;
+}
+
+/* ------------------------------------------------------ activity feeds -- */
+
+.feed {
+  @apply flex flex-col;
+}
+
+.feed__item {
+  @apply flex items-start gap-3 border-b border-slate-100 px-5 py-3.5;
+  transition: background-color 0.15s ease;
+}
+.feed__item:hover {
+  @apply bg-slate-50;
+}
+.feed__item:last-child {
+  @apply border-b-0;
+}
+
+.feed__icon {
+  @apply grid size-9 shrink-0 place-items-center rounded-full bg-sand-100 text-sand-600;
+}
+
+.feed__body {
+  @apply min-w-0 flex-1;
+}
+.feed__title {
+  @apply text-[13px] font-semibold text-navy-900;
+  overflow-wrap: anywhere;
+}
+.feed__meta {
+  @apply mt-0.5 text-[11.5px] text-slate-500;
+  overflow-wrap: anywhere;
+}
+.feed__time {
+  @apply shrink-0 pt-0.5 text-[11px] whitespace-nowrap text-slate-400;
+}
+
+/* --------------------------------------------------------- report bits -- */
+
+.report-toolbar {
+  @apply mb-5 flex flex-wrap items-center gap-2.5 px-4 py-3;
+}
+
+.preset-tabs {
+  @apply flex flex-wrap gap-1 rounded-full bg-slate-100 p-1;
+}
+
+.preset-tab {
+  @apply cursor-pointer rounded-full px-4 py-1.5 text-[12.5px] font-semibold whitespace-nowrap text-slate-500;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.preset-tab:hover {
+  @apply text-slate-900;
+}
+.preset-tab.is-active {
+  @apply bg-navy-900 text-white;
+}
+
+.range-inputs {
+  @apply flex flex-wrap items-center gap-2;
+}
+.range-inputs .input {
+  @apply w-auto min-w-[150px];
+}
+
+.kpi-strip {
+  @apply mb-5 grid gap-3;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.kpi {
+  @apply rounded-[18px] border-l-4 border-brand-600 bg-white px-5 py-4 shadow-card;
+  transition: transform 0.18s ease;
+}
+.kpi:hover {
+  @apply -translate-y-0.5;
+}
+
+.kpi__label {
+  @apply text-[11px] font-semibold tracking-[0.06em] text-slate-500 uppercase;
+}
+
+.kpi__value {
+  @apply mt-1.5 text-[22px] leading-tight font-bold tracking-tight text-navy-900 tabular-nums;
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 1180px) {
+  .dash-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .stat-grid {
+    @apply gap-3;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  .stat-card {
+    @apply gap-3 p-4;
+  }
+  .stat-card__value {
+    @apply text-[22px];
+  }
+  .stat-card__icon {
+    @apply size-10;
+  }
+  .dash-hero {
+    @apply rounded-2xl px-5 py-5;
+  }
+  .dash-hero__title {
+    @apply text-2xl;
+  }
+  .dash-hero__actions,
+  .dash-hero__actions .btn {
+    @apply w-full;
+  }
+  .metric-focus {
+    @apply gap-4 rounded-2xl p-5;
+  }
+  .metric-focus__value {
+    @apply text-4xl;
+  }
+  .metric-focus__aside {
+    @apply w-full border-l-0 pt-4 pl-0;
+    border-top: 1px solid rgb(255 255 255 / 0.16);
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  }
+  .field-select-bar .select {
+    @apply w-full min-w-0;
+  }
+  .field-select-bar__stamp {
+    @apply hidden;
+  }
+}
+
+@media (max-width: 520px) {
+  .stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .stat-card {
+    @apply flex-col gap-2.5;
+  }
+  .stat-card__label {
+    @apply text-[10.5px];
+  }
+  .stat-card__value {
+    @apply text-xl;
+  }
+  .trip-row {
+    @apply gap-2;
+    grid-template-columns: 70px 1fr auto;
+  }
+  .trip-row__value {
+    @apply min-w-[66px];
+  }
+  .trip-row__pct {
+    @apply hidden;
+  }
+  .metric-focus__value {
+    @apply text-3xl;
+  }
+  .metric-focus__icon {
+    @apply size-13;
+  }
+}
+
+.card .kpi {
+  @apply bg-slate-50 shadow-none;
+}

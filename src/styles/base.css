@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Base layer - element defaults on top of Tailwind's preflight
+   ========================================================================== */
+
+:root {
+  --sidebar-width: 264px;
+  --header-height: 64px;
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-canvas font-sans text-sm leading-normal text-slate-800 antialiased;
+  /* Section 27: the page itself must never scroll sideways. */
+  overflow-x: hidden;
+}
+
+/* The sand, behind every screen. A fixed layer rather than a fixed
+   background: phones scroll it smoothly and never stretch it. */
+body::before {
+  content: '';
+  @apply pointer-events-none fixed inset-0 -z-10;
+  background: var(--color-sand-100) url('/sand-bg.svg') center bottom / cover no-repeat;
+}
+
+@media print {
+  body::before {
+    display: none;
+  }
+}
+
+/* Images stay inline, as browsers have them by default.
+
+   html2canvas - which draws the receipt for "Printer Image" and "Download
+   PDF" - measures each font's baseline by placing a tiny <img> beside a
+   <span>. Tailwind's preflight makes every image `display: block`, which
+   drops that image onto a line of its own, and every line of text in the
+   exported receipt then lands several pixels too low. Nothing in the app
+   relies on block images: each one sits in a flex or grid box, or sets its
+   own display. */
+img {
+  display: inline;
+  vertical-align: baseline;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-semibold text-navy-900;
+  line-height: 1.25;
+}
+
+a {
+  @apply text-brand-700 no-underline;
+}
+a:hover {
+  @apply underline;
+}
+
+button,
+[role='tab'],
+select,
+summary {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-brand-200);
+  color: var(--color-slate-900);
+}
+
+/* Slim, quiet scrollbars for the sidebar, tables and the page. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-slate-300) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: var(--color-slate-300);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-slate-400);
+  background-clip: content-box;
+}
+
+/* ------------------------------------------------------------ boot screen */
+/* Painted by index.html before React mounts. */
+
+.boot-screen {
+  @apply flex min-h-screen flex-col items-center justify-center gap-4 bg-canvas text-[13px] font-medium text-slate-500;
+}
+
+.boot-mark {
+  width: 67px;
+  height: 72px;
+  object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

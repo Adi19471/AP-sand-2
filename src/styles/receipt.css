@@ -1,0 +1,210 @@
+/* ==========================================================================
+   The receipt document - a plain, narrow slip in thermal-roll proportions.
+
+   Emblem beside the title, the copy name underlined, then label / value
+   lines in a typewriter face. Groups - and the two copies - are separated by
+   space alone: there are no boxes, rules, leaders or dashed lines anywhere
+   on the slip.
+
+   This file is deliberately plain CSS outside the Tailwind layers and uses
+   literal hex colours only. `utils/pdf.js` clones `.receipt-sheet` for the
+   print dialog and feeds it to html2canvas for the printer image and PDF,
+   and `print.css` re-lays it out for each paper size - so nothing here may
+   depend on a utility class, a theme variable or a cascade layer.
+
+   The screen chrome around the sheet (stage, action bar, summary) is in
+   pages.css.
+   ========================================================================== */
+
+/* ------------------------------------------------------------ brand emblem */
+
+.app-emblem {
+  flex-shrink: 0;
+  object-fit: contain;
+  user-select: none;
+}
+
+/* Thermal-only copy: styles/print.css swaps it in on thermal paper. */
+.app-emblem.app-emblem--print { display: none; }
+
+/* The printable region. Everything outside it is hidden at print time. */
+.receipt-sheet {
+  width: 330px;
+  max-width: 100%;
+  padding: 18px 16px 20px;
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
+  /* Courier Prime is loaded by index.html, so the slip looks the same on a
+     phone as on a desktop. (Android's own 'Courier New' is Cutive Mono, a
+     hairline face with no bold - hence a web font, not a system one.) */
+  font-family: 'Courier Prime', 'Courier New', Courier, 'Liberation Mono', monospace;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* ---------------------------------------------------------------- header */
+
+.receipt-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding-bottom: 8px;
+  text-align: left;
+}
+
+.receipt-seal { display: block; margin: 0; }
+
+.receipt-head__text { min-width: 0; }
+
+.receipt-head__title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #000000;
+  line-height: 1.1;
+}
+
+.receipt-head__subtitle {
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  color: #4b5563;
+  margin-top: 2px;
+}
+
+/* ------------------------------------------------------------ copy label */
+
+.receipt-copy-title {
+  margin: 4px 0 8px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: underline;
+  color: #000000;
+}
+
+/* --------------------------------------------------------------- rows -- */
+
+.receipt-rows { display: block; }
+
+/* A little air between groups is the only separator. */
+.receipt-group + .receipt-group { margin-top: 7px; }
+
+.receipt-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 1.5px 0;
+}
+
+.receipt-row__label {
+  flex: 0 0 auto;
+  max-width: 50%;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.receipt-row__value {
+  flex: 0 1 auto;
+  text-align: right;
+  font-weight: 700;
+  color: #000000;
+  overflow-wrap: anywhere;
+  max-width: 60%;
+}
+
+/* "Address: Kurnool" - label and value run on together and wrap as text. */
+.receipt-row--block { display: block; padding: 2px 0; }
+.receipt-row--block .receipt-row__label { display: inline; max-width: none; white-space: normal; }
+.receipt-row--block .receipt-row__value {
+  display: inline;
+  text-align: left;
+  max-width: none;
+  white-space: pre-wrap;
+}
+
+/* A spacer, not a rule: nothing is drawn. */
+.receipt-divider {
+  margin: 9px 0;
+  border: 0;
+  height: 0;
+}
+
+/* The blank gap between the Consumer and Driver copies. */
+.receipt-divider--strong {
+  margin: 0;
+  height: 22px;
+}
+
+/* ----------------------------------------------------------------- qr -- */
+
+.receipt-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 0 2px;
+}
+
+.receipt-qr__frame {
+  background: #ffffff;
+  line-height: 0;
+}
+
+.receipt-qr__frame img,
+.receipt-qr__frame canvas { display: block; width: 118px; height: 118px; }
+
+.receipt-qr__caption {
+  font-size: 8.5px;
+  color: #4b5563;
+  text-align: center;
+}
+
+.receipt-qr__placeholder {
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  background: #f1f5f9;
+  color: #94a3b8;
+  font-size: 8px;
+  text-align: center;
+  padding: 8px;
+}
+
+.receipt-thanks {
+  margin-top: 2px;
+  text-align: center;
+  font-size: 10px;
+  color: #374151;
+}
+
+.receipt-foot {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 8px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.receipt-status-stamp {
+  margin: 8px auto 0;
+  padding: 3px 10px;
+  width: fit-content;
+  border: 2px solid #dc2626;
+  border-radius: 3px;
+  color: #dc2626;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  transform: rotate(-4deg);
+}
+
+@media (max-width: 420px) {
+  .receipt-sheet { width: 100%; padding: 14px 12px 16px; font-size: 11.5px; }
+  .receipt-head__title { font-size: 17px; }
+}
