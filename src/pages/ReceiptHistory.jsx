@@ -25,6 +25,7 @@ export const StatusBadge = ({ status }) =>
 const CSV_COLUMNS = [
   { label: 'Receipt ID', value: (r) => r.receiptId },
   { label: 'Dispatch ID', value: (r) => r.dispatchId },
+  { label: 'Hologram ID', value: (r) => r.hologramId },
   { label: 'Order ID', value: (r) => r.orderId },
   { label: 'Trip No', value: (r) => r.tripNo },
   { label: 'Status', value: (r) => r.status },

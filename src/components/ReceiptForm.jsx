@@ -42,6 +42,7 @@ const buildInitialForm = (settings = {}) => ({
   availableSand: '',
   constructionName: '',
   dispatchId: suggestDispatchId(),
+  hologramId: '',
 });
 
 /**
@@ -156,6 +157,18 @@ const ReceiptForm = ({ settings = {}, submitting = false, onSubmit, onCancel }) 
               readOnly
               hint="Generated automatically."
               autoComplete="off"
+            />
+            <TextField
+              id="hologramId"
+              name="hologramId"
+              label="Hologram ID"
+              value={form.hologramId}
+              onChange={(event) => setValue('hologramId', event.target.value.toUpperCase())}
+              onBlur={handleBlur}
+              placeholder="Enter hologram ID"
+              maxLength={64}
+              autoComplete="off"
+              style={{ textTransform: 'uppercase' }}
             />
           </div>
         </fieldset>

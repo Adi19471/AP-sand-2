@@ -13,6 +13,7 @@ import { friendlyError } from '../utils/errors';
 const CSV_COLUMNS = [
   { label: 'Receipt ID', value: (r) => r.receiptId },
   { label: 'Dispatch ID', value: (r) => r.dispatchId },
+  { label: 'Hologram ID', value: (r) => r.hologramId },
   { label: 'Order ID', value: (r) => r.orderId },
   { label: 'Status', value: (r) => r.status },
   { label: 'Customer Name', value: (r) => r.customerName },

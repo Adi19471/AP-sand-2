@@ -80,6 +80,7 @@ const InfoCard = ({ receipt }) => {
 
       <dl className="sand-info__group">
         <Row label="Dispatch ID" value={receipt.dispatchId} />
+        <Row label="Hologram ID" value={receipt.hologramId} />
         <Row label="Trip Number" value={receipt.tripNo} />
         <Row label="Vehicle Number/Type" value={vehicle} />
         <Row label="Driver Name/Mobile No" value={driver} />

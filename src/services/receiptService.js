@@ -84,6 +84,7 @@ export const buildSearchKeys = (receipt) => {
     receipt.receiptId,
     receipt.orderId,
     receipt.dispatchId,
+    receipt.hologramId,
     receipt.tripNo,
     receipt.customerMobile,
     receipt.driverMobile,
@@ -124,6 +125,7 @@ const buildVerification = (receipt) => ({
   receiptId: receipt.receiptId,
   orderId: receipt.orderId || '',
   dispatchId: receipt.dispatchId || '',
+  hologramId: receipt.hologramId || '',
   tripNo: receipt.tripNo || '',
   customerName: receipt.customerName || '',
   customerMobile: receipt.customerMobile || '',
@@ -209,7 +211,7 @@ export const attachVerification = async (receipt) => {
 
 /**
  * Find a receipt from whatever an operator typed or scanned: a receipt
- * number (`APS-2026-000001`) or a dispatch id (`DSP...`).
+ * number (`APS-2026-000001`), a dispatch id (`DSP...`) or a hologram id.
  */
 export const findReceiptByCode = async (code, viewer) => {
   const value = String(code || '').trim();
@@ -227,11 +229,15 @@ export const findReceiptByCode = async (code, viewer) => {
     }
   }
 
-  const constraints = [where('dispatchId', '==', upper)];
-  if (viewer?.role !== ROLES.ADMIN) constraints.push(where('createdBy', '==', viewer.uid));
-  constraints.push(limit(1));
-  const snapshot = await getDocs(query(receiptsCol(), ...constraints));
-  return snapToArray(snapshot)[0] || null;
+  for (const field of ['dispatchId', 'hologramId']) {
+    const constraints = [where(field, '==', upper)];
+    if (viewer?.role !== ROLES.ADMIN) constraints.push(where('createdBy', '==', viewer.uid));
+    constraints.push(limit(1));
+    const snapshot = await getDocs(query(receiptsCol(), ...constraints));
+    const found = snapToArray(snapshot)[0];
+    if (found) return found;
+  }
+  return null;
 };
 
 /** ---------------------------------------------------------------- create */
@@ -282,6 +288,7 @@ export const createReceipt = async (form, actor, settings = {}) => {
     eligibleQuantity: optionalNumber(form.eligibleQuantity),
     constructionName: String(form.constructionName ?? '').trim(),
     dispatchId: String(form.dispatchId ?? '').trim() || buildDispatchId(receiptId),
+    hologramId: String(form.hologramId ?? '').trim().toUpperCase(),
     status: RECEIPT_STATUS.ACTIVE,
     createdBy: actor.uid,
     createdByEmail: String(actor.email || '').toLowerCase(),

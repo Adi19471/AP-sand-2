@@ -66,9 +66,11 @@ const ReceiptCopy = ({
 
       <div className="receipt-rows">
         <div className="receipt-group">
+             {receipt.hologramId && <Row label="Hologram ID" value={receipt.hologramId} />}
           <Row label="Receipt ID" value={receipt.receiptId} />
           <Row label="Order ID" value={receipt.orderId} />
           <Row label="Dispatch ID" value={receipt.dispatchId} />
+       
           <Row label="Trip No" value={receipt.tripNo} />
         </div>
 

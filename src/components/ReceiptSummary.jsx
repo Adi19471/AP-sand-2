@@ -17,6 +17,9 @@ const ReceiptSummary = ({ receipt }) => (
     <Item label="Dispatch ID" mono>
       {receipt.dispatchId || '-'}
     </Item>
+    <Item label="Hologram ID" mono>
+      {receipt.hologramId || '-'}
+    </Item>
     <Item label="Order ID">{receipt.orderId}</Item>
     <Item label="Trip No">{receipt.tripNo || '-'}</Item>
     <Item label="Customer">

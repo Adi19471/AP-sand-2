@@ -39,7 +39,7 @@ const decodeWithJsQr = async (source, canvas) => {
 
 /**
  * Scan a receipt QR with the device camera (or from a photo), or type a
- * receipt number / dispatch ID, and jump straight to that receipt.
+ * receipt number / dispatch ID / hologram ID, and jump straight to that receipt.
  */
 const ScanReceipt = () => {
   const navigate = useNavigate();
@@ -252,8 +252,8 @@ const ScanReceipt = () => {
               className="input font-mono"
               value={code}
               onChange={(event) => setCode(event.target.value)}
-              placeholder="APS-2026-000123 or DSP2026…"
-              aria-label="Receipt number or dispatch ID"
+              placeholder="APS-2026-000123, DSP2026… or Hologram ID"
+              aria-label="Receipt number, dispatch ID or hologram ID"
               autoComplete="off"
             />
             <button type="submit" className="btn btn--primary" disabled={!code.trim() || lookingUp}>
