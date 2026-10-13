@@ -15,6 +15,21 @@ export const Loading = ({ label = 'Loading…', size = 26 }) => (
   </div>
 );
 
+/** Served from `public/`; the file has a white background of its own. */
+const LOGO_SRC = `${import.meta.env.BASE_URL}sand-logo.jpg`;
+
+/**
+ * Full-screen sand logo, shown while the QR verification page loads its
+ * details. index.html boots `/v/:token` with this same markup, so a scanned
+ * receipt shows one unbroken screen - keep the two in step.
+ */
+export const LogoLoading = ({ label = 'Loading details…' }) => (
+  <div className="logo-loading" role="status" aria-live="polite">
+    <img className="logo-loading__mark" src={LOGO_SRC} alt="" draggable="false" />
+    <span>{label}</span>
+  </div>
+);
+
 export const LoadingInline = ({ label = 'Loading…' }) => (
   <span className="loading-inline" role="status">
     <Spinner size={14} />

@@ -252,7 +252,7 @@ const ScanReceipt = () => {
               className="input font-mono"
               value={code}
               onChange={(event) => setCode(event.target.value)}
-              placeholder="APS-2026-000123, DSP2026… or Hologram ID"
+              placeholder="APS-2026-000123, GCTR2026… or Hologram ID"
               aria-label="Receipt number, dispatch ID or hologram ID"
               autoComplete="off"
             />

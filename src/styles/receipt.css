@@ -147,7 +147,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 10px 0 2px;
+  padding: 0 0 8px;
 }
 
 .receipt-qr__frame {

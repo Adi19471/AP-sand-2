@@ -30,9 +30,9 @@ const BlockRow = ({ label, value }) =>
  * Both carry the same information (spec section 14); the Driver copy adds the
  * QR verification block and the "Thank You" line.
  *
- * Deliberately plain: emblem beside the title, the copy name underlined, then
- * label / value lines in groups separated by space alone - no boxes, rules or
- * leaders. Paper sizes re-lay it out in styles/print.css.
+ * Deliberately plain: emblem beside the title, the copy name underlined, the
+ * QR code, then label / value lines in groups separated by space alone - no
+ * boxes, rules or leaders. Paper sizes re-lay it out in styles/print.css.
  */
 const ReceiptCopy = ({
   receipt,
@@ -48,9 +48,6 @@ const ReceiptCopy = ({
   const registrationStamp = receipt.registrationAt
     ? formatDateTime(receipt.registrationAt)
     : `${formatDate(receipt.registrationDate)} ${receipt.registrationTime || ''}`.trim();
-  const hasAddressBlock = Boolean(
-    receipt.address || receipt.registrationAddress || receipt.constructionName,
-  );
 
   return (
     <section className="receipt-copy" aria-label={`${isDriver ? 'Driver' : 'Consumer'} copy`}>
@@ -64,17 +61,21 @@ const ReceiptCopy = ({
 
       <div className="receipt-copy-title">{isDriver ? 'Driver Copy' : 'Consumer Copy'}</div>
 
-      <div className="receipt-rows">
-        <div className="receipt-group">
-             {receipt.hologramId && <Row label="Hologram ID" value={receipt.hologramId} />}
-          <Row label="Receipt ID" value={receipt.receiptId} />
-          <Row label="Order ID" value={receipt.orderId} />
-          <Row label="Dispatch ID" value={receipt.dispatchId} />
-       
-          <Row label="Trip No" value={receipt.tripNo} />
+      {showQr && (
+        <div className="receipt-qr">
+          <div className="receipt-qr__frame">
+            <QrCode value={buildQrPayload(receipt)} size={118} />
+          </div>
+          <p className="receipt-qr__caption">Scan to verify this dispatch</p>
         </div>
+      )}
 
+      <div className="receipt-rows">
+        {/* The printed slip's own order, Hologram ID first. */}
         <div className="receipt-group">
+          {receipt.hologramId && <Row label="Hologram ID" value={receipt.hologramId} />}
+          <Row label="Order ID" value={receipt.orderId} />
+          <Row label="Trip No" value={receipt.tripNo} />
           <Row label="Customer Name" value={receipt.customerName} />
           <Row label="Customer Mobile" value={maskMobile(receipt.customerMobile)} />
           <Row
@@ -82,52 +83,34 @@ const ReceiptCopy = ({
             value={`${formatQuantity(receipt.sandQuantity)} ${printedUnit(receipt.sandUnit)}`.trim()}
           />
           <Row label="Sand Supply Point" value={receipt.supplyPoint} />
+          <Row label="Dispatch Date" value={dispatchStamp} />
+          <Row label="Driver Name" value={receipt.driverName} />
+          <Row label="Vehicle No" value={receipt.vehicleNo} />
+          <BlockRow label="Address" value={receipt.address} />
+        </div>
+
+        {/* Everything else the receipt records. */}
+        <div className="receipt-group">
+          <Row label="Receipt ID" value={receipt.receiptId} />
+          <Row label="Dispatch ID" value={receipt.dispatchId} />
           {receipt.availableSand !== null && receipt.availableSand !== undefined && receipt.availableSand !== '' && (
             <Row label="Available Sand" value={formatQuantity(receipt.availableSand)} />
           )}
-          <Row label="Dispatch Date" value={dispatchStamp} />
           {registrationStamp && registrationStamp !== '-' && (
             <Row label="Registration" value={registrationStamp} />
           )}
-        </div>
-
-        <div className="receipt-group">
-          <Row label="Driver Name" value={receipt.driverName} />
           <Row label="Driver Mobile" value={maskMobile(receipt.driverMobile)} />
-          <Row label="Vehicle No" value={receipt.vehicleNo} />
           <Row label="Vehicle Trip" value={receipt.vehicleTrip} />
+          <BlockRow label="Registration Address" value={receipt.registrationAddress} />
+          <BlockRow label="Construction Name" value={receipt.constructionName} />
         </div>
-
-        {hasAddressBlock && (
-          <div className="receipt-group">
-            <BlockRow label="Address" value={receipt.address} />
-            <BlockRow label="Registration Address" value={receipt.registrationAddress} />
-            <BlockRow label="Construction Name" value={receipt.constructionName} />
-          </div>
-        )}
       </div>
 
       {receipt.status === 'CANCELLED' && <div className="receipt-status-stamp">CANCELLED</div>}
 
-      {showQr && (
-        <>
-          <div className="receipt-qr">
-            <div className="receipt-qr__frame">
-              <QrCode value={buildQrPayload(receipt)} size={118} />
-            </div>
-            <p className="receipt-qr__caption">Scan to verify this dispatch</p>
-          </div>
-          <p className="receipt-thanks">{footerNote || 'Thank You'}</p>
-        </>
-      )}
+      {showQr && <p className="receipt-thanks">{footerNote || 'Thank You'}</p>}
 
-      <p className="receipt-foot">
-        Issued by {receipt.createdByEmail || 'system'}
-        <br />
-        Printed on {formatDate(new Date())} at {formatTime(new Date())}
-        <br />
-        This is a computer generated receipt.
-      </p>
+     
     </section>
   );
 };

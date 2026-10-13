@@ -54,7 +54,7 @@
 .receipt-print-root .receipt-divider { margin: 5px 0; }
 .receipt-print-root .receipt-divider--strong { margin: 0; height: 14px; }
 
-.receipt-print-root .receipt-qr { gap: 3px; padding: 6px 0 2px; }
+.receipt-print-root .receipt-qr { gap: 3px; padding: 0 0 5px; }
 /* The QR <img> carries an inline size, hence !important. */
 .receipt-print-root .receipt-qr__frame img,
 .receipt-print-root .receipt-qr__frame canvas { width: 88px !important; height: 88px !important; }
@@ -120,7 +120,7 @@
 /* About 6 mm of blank roll between the two copies - no line is printed. */
 .receipt-print-root.is-thermal .receipt-divider--strong { margin: 0; height: 22px; }
 
-.receipt-print-root.is-thermal .receipt-qr { gap: 4px; padding: 8px 0 2px; }
+.receipt-print-root.is-thermal .receipt-qr { gap: 4px; padding: 0 0 6px; }
 .receipt-print-root.is-thermal .receipt-qr__frame img,
 .receipt-print-root.is-thermal .receipt-qr__frame canvas {
   width: 112px !important;

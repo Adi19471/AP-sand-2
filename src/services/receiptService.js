@@ -211,14 +211,15 @@ export const attachVerification = async (receipt) => {
 
 /**
  * Find a receipt from whatever an operator typed or scanned: a receipt
- * number (`APS-2026-000001`), a dispatch id (`DSP...`) or a hologram id.
+ * number (`APS-2026-000001`), a dispatch id (`GCTR...`, or `DSP...` on older
+ * receipts) or a hologram id.
  */
 export const findReceiptByCode = async (code, viewer) => {
   const value = String(code || '').trim();
   if (!value) return null;
 
   const upper = value.toUpperCase();
-  if (!upper.startsWith('DSP')) {
+  if (!/^(GCTR|DSP)/.test(upper)) {
     try {
       const byId = await getReceiptById(upper);
       if (byId) return byId;
@@ -255,6 +256,7 @@ export const createReceipt = async (form, actor, settings = {}) => {
 
   const { receiptId } = await reserveReceiptNumber(settings.receiptPrefix);
   const now = new Date();
+  const dispatchId = await buildDispatchId(now);
 
   const dispatchAt = combineDateAndTime(form.dispatchDate, form.dispatchTime);
   const registrationAt = combineDateAndTime(form.registrationDate, form.registrationTime);
@@ -287,7 +289,7 @@ export const createReceipt = async (form, actor, settings = {}) => {
     registrationQuantity: optionalNumber(form.registrationQuantity),
     eligibleQuantity: optionalNumber(form.eligibleQuantity),
     constructionName: String(form.constructionName ?? '').trim(),
-    dispatchId: String(form.dispatchId ?? '').trim() || buildDispatchId(receiptId),
+    dispatchId,
     hologramId: String(form.hologramId ?? '').trim().toUpperCase(),
     status: RECEIPT_STATUS.ACTIVE,
     createdBy: actor.uid,

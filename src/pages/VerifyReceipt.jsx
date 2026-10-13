@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import Emblem from '../components/Emblem';
-import { Spinner } from '../components/Loading';
+import { LogoLoading } from '../components/Loading';
 import { parseScannedCode } from '../components/QrCode';
 import { useAuth } from '../hooks/useAuth';
 import {
@@ -217,12 +217,7 @@ const VerifyReceipt = () => {
           </div>
         </form>
 
-        {!cleared && state === 'loading' && (
-          <div className="sand-info__message">
-            <Spinner size={22} />
-            Loading details…
-          </div>
-        )}
+        {!cleared && state === 'loading' && <LogoLoading />}
 
         {!cleared && state === 'missing' && (
           <div className="sand-info__message sand-info__message--bad">

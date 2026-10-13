@@ -28,6 +28,15 @@
         <p>Loading AP SAND Management System&hellip;</p>
       </div>
     </div>
+    <!-- A scanned receipt (/v/:token) boots behind the sand logo instead: the
+         same screen LogoLoading (components/Loading.jsx) shows while the
+         details load, so the two run together. -->
+    <script>
+      if (location.pathname.indexOf('/v/') === 0) {
+        document.getElementById('root').innerHTML =
+          '<div class="logo-loading"><img class="logo-loading__mark" src="/sand-logo.jpg" alt="" /><span>Loading details&hellip;</span></div>';
+      }
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

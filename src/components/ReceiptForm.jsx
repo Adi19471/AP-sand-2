@@ -15,7 +15,7 @@ import VehicleTripSelect from './VehicleTripSelect';
 import { Spinner } from './Loading';
 import { SAND_UNITS } from '../utils/constants';
 import { toInputDate, toInputTime } from '../utils/dateUtils';
-import { suggestDispatchId, suggestOrderId } from '../utils/receiptNumber';
+import { suggestOrderId } from '../utils/receiptNumber';
 import { digitsOnly, hasErrors, validateReceipt } from '../utils/validation';
 
 const buildInitialForm = (settings = {}) => ({
@@ -41,7 +41,6 @@ const buildInitialForm = (settings = {}) => ({
   registrationAddress: '',
   availableSand: '',
   constructionName: '',
-  dispatchId: suggestDispatchId(),
   hologramId: '',
 });
 
@@ -153,9 +152,10 @@ const ReceiptForm = ({ settings = {}, submitting = false, onSubmit, onCancel }) 
               id="dispatchId"
               name="dispatchId"
               label="Dispatch ID"
-              value={form.dispatchId}
+              value=""
               readOnly
-              hint="Generated automatically."
+              placeholder="Assigned on save"
+              hint="Generated automatically when you save."
               autoComplete="off"
             />
             <TextField
